@@ -1,0 +1,7 @@
+version: 1.0.0
+name: Claim-Swap-Transfer Loop Task
+description: Claims, swaps or transfers in loop
+inputs:
+  - chainId: "int32"
+  - usdFeeAmount: "string"
+  - smartAccount: "address"
