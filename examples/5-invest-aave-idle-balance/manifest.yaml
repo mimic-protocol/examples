@@ -1,0 +1,11 @@
+version: 6.0.0
+name: Invest in a AAVE idle balance
+description: Automated task to invest in AAVE idle balance above certain threshold in USD
+inputs:
+  - chainId: uint32
+  - aToken: address
+  - slippage: uint32
+  - thresholdUSD: uint32
+abis:
+  - ERC20: ./abis/ERC20.json
+  - AaveToken: ./abis/AaveToken.json

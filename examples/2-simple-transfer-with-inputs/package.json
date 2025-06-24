@@ -1,0 +1,18 @@
+{
+  "name": "@mimicprotocol/examples-simple-transfer-with-inputs",
+  "version": "0.0.1",
+  "license": "Unlicensed",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "mimic codegen && mimic compile"
+  },
+  "devDependencies": {
+    "@mimicprotocol/cli": "^0.0.1-rc.1",
+    "@mimicprotocol/lib-ts": "^0.0.1-rc.1",
+    "assemblyscript": "0.27.36",
+    "json-as": "1.0.7",
+    "typescript": "^5.8.3",
+    "visitor-as": "0.11.4"
+  }
+}

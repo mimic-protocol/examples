@@ -1,6 +1,0 @@
-version: 1.0.0
-name: Rocket Pool collector
-description: Collects the rewards from all the minipools created by a node
-abis:
-  - RocketMinipoolManager: ./abis/RocketMinipoolManager.json
-  - RocketMinipoolDelegate: ./abis/RocketMinipoolDelegate.json

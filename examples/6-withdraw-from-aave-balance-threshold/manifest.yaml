@@ -1,0 +1,12 @@
+version: 6.0.0
+name: Withdraw from AAVE based on balance threshold
+description: Automated task to withdraw from AAVE based on balance threshold in USD
+inputs:
+  - chainId: uint32
+  - aToken: address
+  - slippage: uint32
+  - recipient: address
+  - thresholdUSD: uint32
+abis:
+  - ERC20: ./abis/ERC20.json
+  - AaveToken: ./abis/AaveToken.json

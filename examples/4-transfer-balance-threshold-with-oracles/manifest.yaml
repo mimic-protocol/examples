@@ -1,0 +1,12 @@
+version: 6.0.0
+name: Transfer based on USD threshold
+description: Automated task to execute parameterized transfers based on balance threshold in USD
+inputs:
+  - chainId: uint32
+  - token: address
+  - amount: uint256
+  - recipient: address
+  - fee: uint256
+  - thresholdUSD: uint32
+abis:
+  - ERC20: ./abis/ERC20.json

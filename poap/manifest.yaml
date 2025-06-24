@@ -1,5 +1,0 @@
-version: 1.0.0
-name: Mimic Rebalancer Settings
-description: Mimic Rebalancer Settings
-abis:
-  - MimicRebalancerSettings: ./abis/MimicRebalancerSettings.json
