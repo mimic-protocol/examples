@@ -366,9 +366,9 @@
   integrity sha512-PfunHQcjwnju84L+ycmcMKB/pTPIngjUJvfnRhKY6FKPuYXlM4aQCb/nIdTFR6BEhMjFvngzvng/vBAJMZpLSA==
 
 "@mimicprotocol/cli@^0.0.1-rc.0":
-  version "0.0.1-rc.8"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.8.tgz#f5c7ba9f0fc1fef149b6e8a0951e142fa85cb275"
-  integrity sha512-0dbWFGvl5dg+AgyTChbRE7MEE4Uj0+KuNUnDrjOB6kLks1YYpxt1I5gEubqj4BhhzuLwo0jCukNfG4BtXyJIcA==
+  version "0.0.1-rc.9"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.9.tgz#8001b74ca9d336b658c06881a53188081c68e5ea"
+  integrity sha512-7j5tyo11LyCwqQYzr/2QdCnZ/Hir0qB/R6Or5tmeAFsyaLY9eCsByoiEPeEzDF/sZWx4eGBvCpq3/OE1rV4VcQ==
   dependencies:
     "@inquirer/prompts" "^7.2.4"
     "@oclif/core" "^4.2.2"
@@ -381,18 +381,18 @@
     zod "^3.24.1"
 
 "@mimicprotocol/lib-ts@^0.0.1-rc.0":
-  version "0.0.1-rc.8"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.8.tgz#c29959ab29e5a7a097ac267b410e7e7b82deb71d"
-  integrity sha512-Fs8qXudCHeDNjP6xYsuMp6I1TaXw0c+YvNIjohG5FvUYAUWryKumMZ389NBURqfnY3qsGI/b7wfVGvB2JebS6w==
+  version "0.0.1-rc.9"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.9.tgz#846b410e9036186164ae57ed8e3a8de6b7c0c933"
+  integrity sha512-TElyThQRI5VOQ+wsqtvMGGaWvIARJKsNpf66AuBD9QPEc5xyuxcAePZeIhJoMRgCjwQzHcZrEJnf9QfAmmxfzw==
   dependencies:
     eslint-config-mimic "^0.0.3"
     json-as "1.0.7"
     visitor-as "0.11.4"
 
 "@mimicprotocol/test-ts@^0.0.1-rc.0":
-  version "0.0.1-rc.8"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/test-ts/-/test-ts-0.0.1-rc.8.tgz#4549357b934b80afa8310057810a6f6a164622f0"
-  integrity sha512-E03dgJAQF0Ce/7grZJ6FKCXYLk6+z2FQ2lttKBVfBCoAfK+AK5wZDedJqqhgQwvp5CIqmlJ780mlUfDhOuhWcw==
+  version "0.0.1-rc.9"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/test-ts/-/test-ts-0.0.1-rc.9.tgz#2dc1b975193b78f31c82dbcdf92bec8c30b2171b"
+  integrity sha512-duquRzBNLeNtF2ePv6ia189RHM+ipSWXq5W730BzJFAitdqs/Jh6ENZADzUse0JeQqFE9EzJSiPMDDR75QAP4w==
   dependencies:
     zod "^3.24.1"
 
