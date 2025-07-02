@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "codegen && compile",
+    "build": "yarn codegen && yarn compile",
     "codegen": "mimic codegen",
     "compile": "mimic compile",
     "test": "mimic test"
@@ -20,6 +20,7 @@
     "chai": "^4.3.7",
     "json-as": "1.0.7",
     "mocha": "^10.2.0",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "visitor-as": "0.11.4"
   }

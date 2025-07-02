@@ -5,11 +5,16 @@
   "description": "Mimic Protocol Examples",
   "license": "GPL-3.0",
   "scripts": {
-    "build": "yarn workspaces run build"
+    "build": "yarn workspaces run build",
+    "test": "yarn workspaces run test"
   },
   "workspaces": {
     "packages": [
       "examples/**"
+    ],
+    "nohoist": [
+      "**/mocha",
+      "**/mocha/**"
     ]
   }
 }

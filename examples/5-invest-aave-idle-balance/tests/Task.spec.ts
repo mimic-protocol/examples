@@ -2,7 +2,7 @@ import { runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
-  const taskDir = './examples/5-invest-aave-idle-balance'
+  const taskDir = './'
 
   const context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',

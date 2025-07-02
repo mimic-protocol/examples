@@ -2,9 +2,9 @@ import { runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
-  it('produces the expected intents', async () => {
-    const taskDir = './examples/1-simple-transfer'
+  const taskDir = './'
 
+  it('produces the expected intents', async () => {
     const context = {
       user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
       settler: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d',
