@@ -1,8 +1,8 @@
-import { Address, BigInt, environment, SwapBuilder, Token, TokenAmount, USD } from '@mimicprotocol/lib-ts'
+import { BigInt, environment, SwapBuilder, Token, TokenAmount, USD } from '@mimicprotocol/lib-ts'
 
-import { inputs } from './types'
-import { ERC20 } from './types/ERC20'
 import { AaveToken } from './types/AaveToken'
+import { ERC20 } from './types/ERC20'
+import { inputs } from './types'
 
 export default function main(): void {
   if (inputs.slippage > 100) throw new Error('Slippage must be between 0 and 100')
@@ -32,7 +32,10 @@ export default function main(): void {
     if (aTokenBalance.lt(aTokenDepositAmount)) console.log('Sender balance not enough')
     else {
       const slippagePct = BigInt.fromI32(100).minus(BigInt.fromI32(inputs.slippage))
-      const minAmountOut = aTokenDepositAmount.toTokenAmount(underlyingToken).times(slippagePct).div(BigInt.fromI32(100))
+      const minAmountOut = aTokenDepositAmount
+        .toTokenAmount(underlyingToken)
+        .times(slippagePct)
+        .div(BigInt.fromI32(100))
       console.log('Min amount out: ' + minAmountOut.toString())
 
       SwapBuilder.forChain(inputs.chainId)

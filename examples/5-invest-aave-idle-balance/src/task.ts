@@ -1,8 +1,8 @@
-import { Address, BigInt, environment, Swap, Token, TokenAmount, USD } from '@mimicprotocol/lib-ts'
+import { BigInt, environment, Swap, Token, TokenAmount, USD } from '@mimicprotocol/lib-ts'
 
-import { inputs } from './types'
-import { ERC20 } from './types/ERC20'
 import { AaveToken } from './types/AaveToken'
+import { ERC20 } from './types/ERC20'
+import { inputs } from './types'
 
 export default function main(): void {
   if (inputs.slippage > 100) throw new Error('Slippage must be between 0 and 100')
@@ -27,8 +27,12 @@ export default function main(): void {
     const minAmountOut = underlyingTokenBalance.toTokenAmount(aToken).times(slippagePct).div(BigInt.fromI32(100))
     console.log('Min amount out: ' + minAmountOut.toString())
 
-    Swap
-      .create(inputs.chainId, underlyingTokenAddress, underlyingTokenBalanceAmount, inputs.aToken, minAmountOut.amount)
-      .send()
+    Swap.create(
+      inputs.chainId,
+      underlyingTokenAddress,
+      underlyingTokenBalanceAmount,
+      inputs.aToken,
+      minAmountOut.amount
+    ).send()
   }
 }

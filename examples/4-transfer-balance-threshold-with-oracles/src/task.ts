@@ -1,7 +1,7 @@
-import { Token, Transfer, USD, TokenAmount } from '@mimicprotocol/lib-ts'
+import { Token, TokenAmount, Transfer, USD } from '@mimicprotocol/lib-ts'
 
-import { inputs } from './types'
 import { ERC20 } from './types/ERC20'
+import { inputs } from './types'
 
 export default function main(): void {
   const tokenContract = new ERC20(inputs.token, inputs.chainId)
