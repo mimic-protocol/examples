@@ -1,4 +1,6 @@
 {
   "extends": "assemblyscript/std/assembly.json",
-  "include": ["./**/*.ts"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["tests/**/*"],
+  "references": [{ "path": "./tests" }]
 }
