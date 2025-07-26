@@ -5,6 +5,7 @@
   "description": "Mimic Protocol Examples",
   "license": "GPL-3.0",
   "scripts": {
+    "lint": "yarn workspaces run lint",
     "build": "yarn workspaces run build",
     "test": "yarn workspaces run test"
   },

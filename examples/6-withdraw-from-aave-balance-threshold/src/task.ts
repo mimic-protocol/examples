@@ -1,4 +1,4 @@
-import { BigInt, environment, SwapBuilder, Token, TokenAmount, USD } from '@mimicprotocol/lib-ts'
+import { BigInt, environment, log, SwapBuilder, Token, TokenAmount, USD } from '@mimicprotocol/lib-ts'
 
 import { AaveToken } from './types/AaveToken'
 import { ERC20 } from './types/ERC20'
@@ -18,9 +18,9 @@ export default function main(): void {
   const underlyingTokenBalance = TokenAmount.fromBigInt(underlyingToken, underlyingTokenBalanceAmount)
   const underlyingTokenBalanceInUsd = underlyingTokenBalance.toUsd()
   const thresholdUsd = USD.fromI32(inputs.thresholdUSD)
-  console.log('Recipient underlying balance in USD: ' + underlyingTokenBalanceInUsd.toString())
+  log.info('Recipient underlying balance in USD: ' + underlyingTokenBalanceInUsd.toString())
 
-  if (underlyingTokenBalanceInUsd.gt(thresholdUsd)) console.log('Recipient threshold not met')
+  if (underlyingTokenBalanceInUsd.gt(thresholdUsd)) log.info('Recipient threshold not met')
   else {
     const depositAmountUsd = thresholdUsd.times(BigInt.fromI32(2)).minus(underlyingTokenBalanceInUsd)
     const aTokenDepositAmount = depositAmountUsd.toTokenAmount(aToken)
@@ -29,14 +29,14 @@ export default function main(): void {
     const aTokenBalanceAmount = aTokenContract.balanceOf(me)
     const aTokenBalance = TokenAmount.fromBigInt(aToken, aTokenBalanceAmount)
 
-    if (aTokenBalance.lt(aTokenDepositAmount)) console.log('Sender balance not enough')
+    if (aTokenBalance.lt(aTokenDepositAmount)) log.info('Sender balance not enough')
     else {
       const slippagePct = BigInt.fromI32(100).minus(BigInt.fromI32(inputs.slippage))
       const minAmountOut = aTokenDepositAmount
         .toTokenAmount(underlyingToken)
         .times(slippagePct)
         .div(BigInt.fromI32(100))
-      console.log('Min amount out: ' + minAmountOut.toString())
+      log.info('Min amount out: ' + minAmountOut.toString())
 
       SwapBuilder.forChain(inputs.chainId)
         .addTokenInFromTokenAmount(aTokenDepositAmount)
