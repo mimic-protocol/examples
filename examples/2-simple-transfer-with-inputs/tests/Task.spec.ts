@@ -19,7 +19,7 @@ describe('Task', () => {
       fee: '100000', // 0.1 USDC
     }
 
-    const intents = await runTask(taskDir, context, { inputs }) as Transfer[]
+    const intents = (await runTask(taskDir, context, { inputs })) as Transfer[]
 
     expect(intents).to.be.an('array').that.is.not.empty
     expect(intents).to.have.lengthOf(1)
