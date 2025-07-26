@@ -12,9 +12,9 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@mimicprotocol/cli": "^0.0.1-rc.0",
-    "@mimicprotocol/lib-ts": "^0.0.1-rc.0",
-    "@mimicprotocol/test-ts": "^0.0.1-rc.0",
+    "@mimicprotocol/cli": "^0.0.1-rc.10",
+    "@mimicprotocol/lib-ts": "^0.0.1-rc.10",
+    "@mimicprotocol/test-ts": "^0.0.1-rc.10",
     "@types/chai": "^5.2.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.5",
