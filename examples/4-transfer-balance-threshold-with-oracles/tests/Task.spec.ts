@@ -68,7 +68,7 @@ describe('Task', () => {
     })
   })
 
-  describe.skip('when the balance is above the threshold', () => {
+  describe('when the balance is above the threshold', () => {
     const balance = '11000000' // 11 USDC
     const calls = buildCalls(balance)
 

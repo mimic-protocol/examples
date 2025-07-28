@@ -95,7 +95,7 @@ describe('Task', () => {
       const userBalance = '11000000' // 11 aOptUSDC
       const calls = buildCalls(recipientBalance, userBalance)
 
-      it.skip('produces the expected intents', async () => {
+      it('produces the expected intents', async () => {
         const intents = (await runTask(taskDir, context, { inputs, calls, prices })) as Swap[]
 
         expect(intents).to.be.an('array').that.is.not.empty
@@ -122,7 +122,7 @@ describe('Task', () => {
       const userBalance = '10999999' // 10.999999 aOptUSDC
       const calls = buildCalls(recipientBalance, userBalance)
 
-      it.skip('does not produce any intent', async () => {
+      it('does not produce any intent', async () => {
         const intents = await runTask(taskDir, context, { inputs, calls, prices })
 
         expect(intents).to.be.an('array').that.is.empty
@@ -134,7 +134,7 @@ describe('Task', () => {
     const recipientBalance = '11000000' // 11 USDC
     const calls = buildCalls(recipientBalance, '0') // `userBalance` does not matter
 
-    it.skip('does not produce any intent', async () => {
+    it('does not produce any intent', async () => {
       const intents = await runTask(taskDir, context, { inputs, calls, prices })
 
       expect(intents).to.be.an('array').that.is.empty
