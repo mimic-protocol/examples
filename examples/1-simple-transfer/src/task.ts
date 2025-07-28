@@ -7,7 +7,5 @@ export default function main(): void {
   const amount = BigInt.fromStringDecimal('1', 6)
   const fee = BigInt.fromStringDecimal('0.1', 6)
 
-  Transfer
-    .create(chainId, USDC, amount, recipient, fee)
-    .send()
+  Transfer.create(chainId, USDC, amount, recipient, fee).send()
 }

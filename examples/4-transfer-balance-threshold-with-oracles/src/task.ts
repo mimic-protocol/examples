@@ -1,4 +1,4 @@
-import { Token, TokenAmount, Transfer, USD } from '@mimicprotocol/lib-ts'
+import { log, Token, TokenAmount, Transfer, USD } from '@mimicprotocol/lib-ts'
 
 import { ERC20 } from './types/ERC20'
 import { inputs } from './types'
@@ -10,11 +10,9 @@ export default function main(): void {
   const token = Token.fromAddress(inputs.token, inputs.chainId)
   const balanceInUsd = TokenAmount.fromBigInt(token, balance).toUsd()
   const thresholdUsd = USD.fromI32(inputs.thresholdUSD)
-  console.log('Balance in USD: ' + balanceInUsd.toString())
+  log.info('Balance in USD: ' + balanceInUsd.toString())
 
   if (balanceInUsd.lt(thresholdUsd)) {
-    Transfer
-      .create(inputs.chainId, inputs.token, inputs.amount, inputs.recipient, inputs.fee)
-      .send()
+    Transfer.create(inputs.chainId, inputs.token, inputs.amount, inputs.recipient, inputs.fee).send()
   }
 }

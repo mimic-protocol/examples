@@ -8,8 +8,6 @@ export default function main(): void {
   const balance = tokenContract.balanceOf(inputs.recipient)
 
   if (balance.lt(inputs.threshold)) {
-    Transfer
-      .create(inputs.chainId, inputs.token, inputs.amount, inputs.recipient, inputs.fee)
-      .send()
+    Transfer.create(inputs.chainId, inputs.token, inputs.amount, inputs.recipient, inputs.fee).send()
   }
 }
