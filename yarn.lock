@@ -365,22 +365,7 @@
   resolved "https://registry.yarnpkg.com/@inquirer/type/-/type-3.0.7.tgz#b46bcf377b3172dbc768fdbd053e6492ad801a09"
   integrity sha512-PfunHQcjwnju84L+ycmcMKB/pTPIngjUJvfnRhKY6FKPuYXlM4aQCb/nIdTFR6BEhMjFvngzvng/vBAJMZpLSA==
 
-"@mimicprotocol/cli@^0.0.1-rc.0":
-  version "0.0.1-rc.10"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.10.tgz#7dea8616bd88661e4b38cec53fda627e762d50cb"
-  integrity sha512-PAvQDhR8Dus+X77SdKiUtM3O5272dbgjeUjjV79uJqs4R1Y5OExBUikwEtFxqx+DOCeO4pa1b59WUv4p1/W66Q==
-  dependencies:
-    "@inquirer/prompts" "^7.2.4"
-    "@oclif/core" "^4.2.2"
-    "@oclif/plugin-not-found" "^3.2.38"
-    axios "^1.7.9"
-    ethers "^6.13.5"
-    form-data "^4.0.1"
-    js-yaml "^4.1.0"
-    lodash "^4.17.21"
-    zod "^3.24.1"
-
-"@mimicprotocol/cli@^0.0.1-rc.11":
+"@mimicprotocol/cli@^0.0.1-rc.0", "@mimicprotocol/cli@^0.0.1-rc.11":
   version "0.0.1-rc.11"
   resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.11.tgz#015af5ce2f92b9e9639ffcb598f05c68a0284865"
   integrity sha512-2G8tmcH+t4ibr+CBuy+6SSswhFoIfN8zBLYBvBvqz+sj41gjOs7zo6Jjwu3aOa+P51qikXphGg+Q/zSGYtITLg==
@@ -395,16 +380,7 @@
     lodash "^4.17.21"
     zod "^3.24.1"
 
-"@mimicprotocol/lib-ts@^0.0.1-rc.0":
-  version "0.0.1-rc.10"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.10.tgz#08dec0c8c01c459dc4a3a473643eb38d398ed7b1"
-  integrity sha512-2uHHdHPkjPXO/S29rtrSuVfyLzAR+JKKccp7vxNk4vp/lmRvZ2wzJoCo47xxkAAY8UEJHAVJNnwfIbVpxgCdXg==
-  dependencies:
-    eslint-config-mimic "^0.0.3"
-    json-as "1.1.7"
-    visitor-as "0.11.4"
-
-"@mimicprotocol/lib-ts@^0.0.1-rc.11":
+"@mimicprotocol/lib-ts@^0.0.1-rc.0", "@mimicprotocol/lib-ts@^0.0.1-rc.11":
   version "0.0.1-rc.11"
   resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.11.tgz#90ad1783be1fa52e68838090215c8b2069a4eb0c"
   integrity sha512-uCzZ7K/uopOTVbJ4T34ZL6xOc8TRGaBDmHSggzaj1kyzCtJ3BGFDX425cwb61IQX9HZMl2BCU1HmJ4v5IYtEXQ==
