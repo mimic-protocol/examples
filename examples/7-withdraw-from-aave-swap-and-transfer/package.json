@@ -1,0 +1,30 @@
+{
+  "name": "@mimicprotocol/examples-withdraw-from-aave-swap-and-transfer",
+  "version": "0.0.1",
+  "license": "Unlicensed",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "yarn codegen && yarn compile",
+    "codegen": "mimic codegen",
+    "compile": "mimic compile",
+    "test": "mimic test",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@mimicprotocol/cli": "^0.0.1-rc.11",
+    "@mimicprotocol/lib-ts": "^0.0.1-rc.11",
+    "@mimicprotocol/test-ts": "^0.0.1-rc.11",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.5",
+    "assemblyscript": "0.27.36",
+    "chai": "^4.3.7",
+    "eslint": "^9.10.0",
+    "json-as": "1.1.7",
+    "mocha": "^10.2.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "visitor-as": "0.11.4"
+  }
+}

@@ -1,0 +1,8 @@
+version: 2.0.0
+name: Claim-Swap-Transfer Loop Task
+description: This task is for demo purposes. It withdraws from AAVE, swaps for an AAVE token and transfer to deposit in loop
+inputs:
+  - usdFeeAmount: string
+  - smartAccount: address
+abis:
+  - AavePool: ./abis/AavePool.json
