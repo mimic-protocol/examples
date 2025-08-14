@@ -43,8 +43,9 @@ describe('Task', () => {
       expect(intents[0].settler).to.be.equal(context.settlers[0].address)
       expect(intents[0].user).to.be.equal(context.user)
       expect(intents[0].chainId).to.be.equal(inputs.chainId)
-      expect(intents[0].feeToken).to.be.equal(inputs.token)
-      expect(intents[0].feeAmount).to.be.equal(inputs.fee)
+      expect(intents[0].maxFees).to.have.lengthOf(1)
+      expect(intents[0].maxFees[0].token).to.be.equal(inputs.token)
+      expect(intents[0].maxFees[0].amount).to.be.equal(inputs.fee)
 
       expect(intents[0].transfers).to.have.lengthOf(1)
       expect(intents[0].transfers[0].token).to.be.equal(inputs.token)

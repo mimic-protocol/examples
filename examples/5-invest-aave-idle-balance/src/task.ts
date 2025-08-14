@@ -1,4 +1,4 @@
-import { BigInt, environment, log, Swap, Token, TokenAmount, USD } from '@mimicprotocol/lib-ts'
+import { BigInt, environment, ERC20Token, log, Swap, TokenAmount, USD } from '@mimicprotocol/lib-ts'
 
 import { AaveToken } from './types/AaveToken'
 import { ERC20 } from './types/ERC20'
@@ -7,11 +7,11 @@ import { inputs } from './types'
 export default function main(): void {
   if (inputs.slippage > 100) throw new Error('Slippage must be between 0 and 100')
 
-  const aToken = Token.fromAddress(inputs.aToken, inputs.chainId)
+  const aToken = ERC20Token.fromAddress(inputs.aToken, inputs.chainId)
   const aTokenContract = new AaveToken(aToken.address, aToken.chainId)
 
   const underlyingTokenAddress = aTokenContract.UNDERLYING_ASSET_ADDRESS()
-  const underlyingToken = Token.fromAddress(underlyingTokenAddress, aToken.chainId)
+  const underlyingToken = ERC20Token.fromAddress(underlyingTokenAddress, aToken.chainId)
 
   const me = environment.getContext().user
   const underlyingTokenContract = new ERC20(underlyingToken.address, underlyingToken.chainId)
