@@ -363,10 +363,10 @@
   resolved "https://registry.yarnpkg.com/@inquirer/type/-/type-3.0.8.tgz#efc293ba0ed91e90e6267f1aacc1c70d20b8b4e8"
   integrity sha512-lg9Whz8onIHRthWaN1Q9EGLa/0LFJjyM8mEUbL1eTi6yMGvBf8gvyDLtxSXztQsxMvhxxNpJYrwa1YHdq+w4Jw==
 
-"@mimicprotocol/cli@^0.0.1-rc.0", "@mimicprotocol/cli@^0.0.1-rc.11":
-  version "0.0.1-rc.12"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.12.tgz#f23b961c55827ee4ce7f1afa821beb941c46a5ec"
-  integrity sha512-N4xg4hZTkuxon+6pIzP51EhVTB4PqfJyQjlE++OODD1yFT4f6xLXYOdQckZ/u7T+2Skg39Z9Z8nDVMzA9CJRbg==
+"@mimicprotocol/cli@latest":
+  version "0.0.1-rc.14"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.14.tgz#f03069a7482f9818360f3ae222fd5e046e04ad64"
+  integrity sha512-V+xmRH2ARpd33z9RNPzpmDxJwMLiJHMqPLG72D8lgwf/n7Dj7zUffh+xMZ+tmQZtv0sLX86vtb33F4QnT+VC7w==
   dependencies:
     "@inquirer/prompts" "^7.2.4"
     "@oclif/core" "^4.2.2"
@@ -378,19 +378,20 @@
     lodash "^4.17.21"
     zod "^3.24.1"
 
-"@mimicprotocol/lib-ts@^0.0.1-rc.0", "@mimicprotocol/lib-ts@^0.0.1-rc.11":
-  version "0.0.1-rc.12"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.12.tgz#990a1c03c7db571f9c460f1dd3d6bdb358b9374d"
-  integrity sha512-QfZdQd7v+OvUQ0jp+4ynemzQM8uscYkhqXI+WgeCWBE8VgW8wio3J5ye/Oa227Rw3J+c7mKjMdkuCRPq6dVYpg==
+"@mimicprotocol/lib-ts@latest":
+  version "0.0.1-rc.14"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.14.tgz#cb85d5071e65ed117789a18f62c48d57a97f14bb"
+  integrity sha512-V9ndlS69qlIaz2tNCJH+BrC2NKKMHQLLjW9hoiR815Z7OQcesZmnOcDchxt76YFAxeyqQERrrfRmuk/O7OP5vQ==
   dependencies:
+    as-base58 "^0.1.1"
     eslint-config-mimic "^0.0.3"
     json-as "1.1.7"
     visitor-as "0.11.4"
 
-"@mimicprotocol/test-ts@^0.0.1-rc.0", "@mimicprotocol/test-ts@^0.0.1-rc.11":
-  version "0.0.1-rc.12"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/test-ts/-/test-ts-0.0.1-rc.12.tgz#bb4408c2239a002961318fbd2045f06c805a3523"
-  integrity sha512-F3/4ZnZNVJofILdpGTnybmsOiE+qQUXaOMPU2nZCqMSeMQ6yDsOh6iBAwEjR6jO73oIMM2JkNCg06HbLn0fI1g==
+"@mimicprotocol/test-ts@latest":
+  version "0.0.1-rc.14"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/test-ts/-/test-ts-0.0.1-rc.14.tgz#71232a4c2985c788849ffdc868e67b049820d794"
+  integrity sha512-HEI8baPhf5zlVMqtqB2WJwbmnsog7dF4DpTA1nTDHg5eLmSMcUl5SM6pdNjULnb6cXNYBbnt44RTpWDQ5qmcZg==
   dependencies:
     zod "^3.24.1"
 
@@ -837,6 +838,11 @@ arraybuffer.prototype.slice@^1.0.4:
     es-errors "^1.3.0"
     get-intrinsic "^1.2.6"
     is-array-buffer "^3.0.4"
+
+as-base58@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/as-base58/-/as-base58-0.1.1.tgz#c8e59413750affc3403bdf28c07704b28fbda0da"
+  integrity sha512-eeoW689sc2U29MeRdYx1Oh5Z1mtS3WLZ7Cmz9wVriBTyFR1oEGeq2spq39RW68snncMx7u9MLYB2z3cETni7xQ==
 
 assemblyscript@0.27.36:
   version "0.27.36"
