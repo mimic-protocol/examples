@@ -1,0 +1,14 @@
+version: 1.0.0
+name: Rebalance to USD target ratios (3 tokens)
+description: Automated task that rebalances a 3-token portfolio to target basis-point weights using USD valuations and slippage-protected swaps
+inputs:
+  - chainId: uint32
+  - tokenA: address
+  - tokenB: address
+  - tokenC: address
+  - targetBpsA: uint16      # e.g., 5000 = 50%
+  - targetBpsB: uint16      # must sum with A & C to 10000
+  - targetBpsC: uint16
+  - slippageBps: uint16     # e.g., 50 = 0.50%
+abis:
+  - ERC20: ./abis/ERC20.json
