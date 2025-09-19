@@ -6,7 +6,7 @@ inputs:
   - token: address
   - amount: uint256
   - recipient: address
-  - fee: uint256
+  - maxFee: uint256
   - thresholdUSD: uint32
 abis:
   - ERC20: ./abis/ERC20.json

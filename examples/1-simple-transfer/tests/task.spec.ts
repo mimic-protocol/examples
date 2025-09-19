@@ -4,16 +4,14 @@ import { expect } from 'chai'
 describe('Task', () => {
   const taskDir = './'
 
+  const context = {
+    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
+    settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
+    timestamp: Date.now(),
+  }
+
   it('produces the expected intents', async () => {
-    const context = {
-      user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-      settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
-      timestamp: Date.now(),
-    }
-
     const intents = (await runTask(taskDir, context)) as Transfer[]
-
-    expect(intents).to.be.an('array').that.is.not.empty
     expect(intents).to.have.lengthOf(1)
 
     expect(intents[0].type).to.be.equal('transfer')
