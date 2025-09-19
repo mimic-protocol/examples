@@ -70,6 +70,13 @@ describe('Task', () => {
       output: '6',
       outputType: 'uint8',
     },
+    {
+      to: underlyingToken,
+      chainId: inputs.chainId,
+      data: '0x95d89b41', // `symbol` fn selector
+      output: 'USDC',
+      outputType: 'string',
+    },
   ]
 
   describe('when the balance is below the threshold', () => {
@@ -78,8 +85,7 @@ describe('Task', () => {
 
     it('does not produce any intent', async () => {
       const intents = await runTask(taskDir, context, { inputs, calls, prices })
-
-      expect(intents).to.be.an('array').that.is.empty
+      expect(intents).to.be.empty
     })
   })
 
@@ -89,8 +95,6 @@ describe('Task', () => {
 
     it('produces the expected intents', async () => {
       const intents = (await runTask(taskDir, context, { inputs, calls, prices })) as Swap[]
-
-      expect(intents).to.be.an('array').that.is.not.empty
       expect(intents).to.have.lengthOf(1)
 
       expect(intents[0].type).to.be.equal('swap')

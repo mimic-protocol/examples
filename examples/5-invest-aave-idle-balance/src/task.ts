@@ -27,12 +27,6 @@ export default function main(): void {
     const minAmountOut = underlyingTokenBalance.toTokenAmount(aToken).times(slippagePct).div(BigInt.fromI32(100))
     log.info('Min amount out: ' + minAmountOut.toString())
 
-    Swap.create(
-      inputs.chainId,
-      underlyingTokenAddress,
-      underlyingTokenBalanceAmount,
-      inputs.aToken,
-      minAmountOut.amount
-    ).send()
+    Swap.create(inputs.chainId, underlyingToken, underlyingTokenBalanceAmount, aToken, minAmountOut.amount).send()
   }
 }

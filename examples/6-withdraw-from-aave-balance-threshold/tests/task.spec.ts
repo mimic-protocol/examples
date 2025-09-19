@@ -97,8 +97,6 @@ describe('Task', () => {
 
       it('produces the expected intents', async () => {
         const intents = (await runTask(taskDir, context, { inputs, calls, prices })) as Swap[]
-
-        expect(intents).to.be.an('array').that.is.not.empty
         expect(intents).to.have.lengthOf(1)
 
         expect(intents[0].type).to.be.equal('swap')
@@ -124,8 +122,7 @@ describe('Task', () => {
 
       it('does not produce any intent', async () => {
         const intents = await runTask(taskDir, context, { inputs, calls, prices })
-
-        expect(intents).to.be.an('array').that.is.empty
+        expect(intents).to.be.empty
       })
     })
   })
@@ -136,8 +133,7 @@ describe('Task', () => {
 
     it('does not produce any intent', async () => {
       const intents = await runTask(taskDir, context, { inputs, calls, prices })
-
-      expect(intents).to.be.an('array').that.is.empty
+      expect(intents).to.be.empty
     })
   })
 })
