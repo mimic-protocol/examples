@@ -364,9 +364,9 @@
   integrity sha512-lg9Whz8onIHRthWaN1Q9EGLa/0LFJjyM8mEUbL1eTi6yMGvBf8gvyDLtxSXztQsxMvhxxNpJYrwa1YHdq+w4Jw==
 
 "@mimicprotocol/cli@latest":
-  version "0.0.1-rc.17"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.17.tgz#9583c8b00bdb5f3d87339a51a44335128ab08a10"
-  integrity sha512-PlEWD+PoX7Z/7rdxQKtQnIzEmUZ526Z87XClKo51f8mGugaxeL+ZMueQOApehNcQ/kWHn9Ay9/QIqI55PPU1VA==
+  version "0.0.1-rc.18"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.18.tgz#3f12bec611e916403a5f7c2bac639f466bf68c27"
+  integrity sha512-lZB3gfv2p3/y/I3cMBFbO7EUf6xIllM/zxerUx5aWe4xV6EgK8Aqmzcg6xN3oOT0QS8ZZjd7WNLQ5e0TM0YsLQ==
   dependencies:
     "@inquirer/prompts" "^7.2.4"
     "@oclif/core" "^4.2.2"
@@ -379,9 +379,9 @@
     zod "^3.24.1"
 
 "@mimicprotocol/lib-ts@latest":
-  version "0.0.1-rc.17"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.17.tgz#0eb111e3cde983609e20018cb8427043212c6c56"
-  integrity sha512-4/MSOLhtNp+sM0fG5RLopEDUnnquxrYb3PvzjXrhc33P4dzV0S/wTZ1gd9NKdx5pijGpWVlOEGn8LO0RT9iPmQ==
+  version "0.0.1-rc.18"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.18.tgz#c5cba0ea2682a0e45ceeb46e8bc2a7a236c53dde"
+  integrity sha512-88GrO4sUm9O33CGi2KwHq3ycUUGp1JDdTvLynhfuuktVDJFYAW8J2BfguNsPWiAInFoP9iDA6Zd3NSSp05VtWw==
   dependencies:
     as-base58 "^0.1.1"
     eslint-config-mimic "^0.0.3"
@@ -389,9 +389,9 @@
     visitor-as "0.11.4"
 
 "@mimicprotocol/test-ts@latest":
-  version "0.0.1-rc.17"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/test-ts/-/test-ts-0.0.1-rc.17.tgz#9962a479f292034b1061a8681540486a16534324"
-  integrity sha512-fWmvI5plmY3QQxFkU5lkO+7ytBde68GRx2cM907GXNCHxQbc4b7UWG7q22WUjU0IeTgkY8/d3b7V8kronF+tNg==
+  version "0.0.1-rc.18"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/test-ts/-/test-ts-0.0.1-rc.18.tgz#c055dfedb17a1080ec672d8f8fb880b2e43f1acd"
+  integrity sha512-gson4ETtK/ba7M4sAxcYoqGl6n53aAFwoQzuBGdNdDj042gfaxSJNB/vF5bIXi45KdVKfaXTbd+hkap1gb0raA==
   dependencies:
     zod "^3.24.1"
 
