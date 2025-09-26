@@ -1,10 +1,10 @@
-import { ContractCall, runTask, Swap } from '@mimicprotocol/test-ts'
+import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
   const taskDir = './'
 
-  const context = {
+  const context: Context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
     settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
     timestamp: Date.now(),
@@ -19,63 +19,91 @@ describe('Task', () => {
 
   const underlyingToken = '0x7f5c764cbc14f9669b88837ca1490cca17c31607' // USDC
 
-  const prices = [
+  const prices: GetPriceMock[] = [
     {
-      token: inputs.aToken,
-      chainId: inputs.chainId,
-      usdPrice: '1000000000000000000', // 1 USD = 1 aOptUSDC
+      request: {
+        token: inputs.aToken,
+        chainId: inputs.chainId,
+      },
+      response: ['1000000000000000000'], // 1 USD = 1 aOptUSDC
     },
     {
-      token: underlyingToken,
-      chainId: inputs.chainId,
-      usdPrice: '1000000000000000000', // 1 USD = 1 USDC
+      request: {
+        token: underlyingToken,
+        chainId: inputs.chainId,
+      },
+      response: ['1000000000000000000'], // 1 USD = 1 USDC
     },
   ]
 
-  const buildCalls = (balance: string): ContractCall[] => [
+  const buildCalls = (balance: string): ContractCallMock[] => [
     // aOptUSDC
     {
-      to: inputs.aToken,
-      chainId: inputs.chainId,
-      data: '0xb16a19de', // `UNDERLYING_ASSET_ADDRESS` fn selector
-      output: underlyingToken,
-      outputType: 'address',
+      request: {
+        to: inputs.aToken,
+        chainId: inputs.chainId,
+        data: '0xb16a19de', // `UNDERLYING_ASSET_ADDRESS` fn selector
+      },
+      response: {
+        value: underlyingToken,
+        abiType: 'address',
+      },
     },
     {
-      to: inputs.aToken,
-      chainId: inputs.chainId,
-      data: '0x313ce567', // `decimals` fn selector
-      output: '6',
-      outputType: 'uint8',
+      request: {
+        to: inputs.aToken,
+        chainId: inputs.chainId,
+        data: '0x313ce567', // `decimals` fn selector
+      },
+      response: {
+        value: '6',
+        abiType: 'uint8',
+      },
     },
     {
-      to: inputs.aToken,
-      chainId: inputs.chainId,
-      data: '0x95d89b41', // `symbol` fn selector
-      output: 'aOptUSDC',
-      outputType: 'string',
+      request: {
+        to: inputs.aToken,
+        chainId: inputs.chainId,
+        data: '0x95d89b41', // `symbol` fn selector
+      },
+      response: {
+        value: 'aOptUSDC',
+        abiType: 'string',
+      },
     },
     // USDC
     {
-      to: underlyingToken,
-      chainId: inputs.chainId,
-      data: '0x70a08231', // `balanceOf` fn selector
-      output: balance,
-      outputType: 'uint256',
+      request: {
+        to: underlyingToken,
+        chainId: inputs.chainId,
+        data: '0x70a08231', // `balanceOf` fn selector
+      },
+      response: {
+        value: balance,
+        abiType: 'uint256',
+      },
     },
     {
-      to: underlyingToken,
-      chainId: inputs.chainId,
-      data: '0x313ce567', // `decimals` fn selector
-      output: '6',
-      outputType: 'uint8',
+      request: {
+        to: underlyingToken,
+        chainId: inputs.chainId,
+        data: '0x313ce567', // `decimals` fn selector
+      },
+      response: {
+        value: '6',
+        abiType: 'uint8',
+      },
     },
     {
-      to: underlyingToken,
-      chainId: inputs.chainId,
-      data: '0x95d89b41', // `symbol` fn selector
-      output: 'USDC',
-      outputType: 'string',
+      request: {
+        to: underlyingToken,
+        chainId: inputs.chainId,
+        data: '0x95d89b41', // `symbol` fn selector
+      },
+      response: {
+        value: 'USDC',
+        abiType: 'string',
+      },
     },
   ]
 
@@ -98,7 +126,7 @@ describe('Task', () => {
       expect(intents).to.have.lengthOf(1)
 
       expect(intents[0].type).to.be.equal('swap')
-      expect(intents[0].settler).to.be.equal(context.settlers[0].address)
+      expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
       expect(intents[0].user).to.be.equal(context.user)
       expect(intents[0].sourceChain).to.be.equal(inputs.chainId)
       expect(intents[0].destinationChain).to.be.equal(inputs.chainId)
