@@ -13,6 +13,6 @@ export default function main(): void {
   log.info('Balance in USD: ' + balanceInUsd.toString())
 
   if (balanceInUsd.lt(thresholdUsd)) {
-    Transfer.create(inputs.chainId, inputs.token, inputs.amount, inputs.recipient, inputs.fee).send()
+    Transfer.create(token, inputs.amount, inputs.recipient, inputs.maxFee).send()
   }
 }
