@@ -10,12 +10,39 @@ on:
     branches: "*"
 
 jobs:
-  test:
+  find-workspaces:
     runs-on: ubuntu-latest
+    outputs:
+      list: ${{ steps.write-output.outputs.list }}
+      workspaces: ${{ steps.write-output.outputs.workspaces }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Write output
+        id: write-output
+        run: |
+          WORKSPACES=$(ls examples | tr '\n' ',' | sed 's/,$//;s/\([^,]*\)/"\1"/g')
+          LIST="[$(echo ${WORKSPACES// /\", \"})]"
+          echo "List: $LIST"
+          echo "list=$LIST" >> "$GITHUB_OUTPUT"
+          echo "workspaces={\"workspace\":$LIST}" >> "$GITHUB_OUTPUT"
+
+  test:
+    runs-on: ubuntu-latest
+    needs: find-workspaces
+    if: needs.find-workspaces.outputs.list != '[""]'
+    strategy:
+      matrix: ${{fromJson(needs.find-workspaces.outputs.workspaces)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Install
-        run: yarn
-      - name: Test
-        run: yarn test
+        shell: bash
+        run: yarn --frozen-lockfile
+      - name: Test ${{ matrix.workdir }}
+        run: |
+          set -euo pipefail
+          yarn workspace @mimicprotocol/${{ matrix.workspace }} test
+          code=$?
+          echo "exit code: $code"
+          exit $code
