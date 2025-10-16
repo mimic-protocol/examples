@@ -1,0 +1,11 @@
+version: 1.0.0
+name: Swap tokens using subgraphs
+description: Swap tokens querying the current price using Uniswap V2 subgraph
+inputs:
+  - chainId: uint32
+  - tokenIn: address
+  - tokenOut: address
+  - slippage: uint32
+  - subgraphId: string
+abis:
+  - ERC20: ./abis/ERC20.json
