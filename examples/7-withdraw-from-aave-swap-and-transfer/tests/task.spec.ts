@@ -35,43 +35,27 @@ describe('Task', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: {
-        to: tokens.USDT,
-        chainId,
-        data: '0x313ce567', // `decimals` fn selector
-      },
-      response: {
-        value: '6',
-        abiType: 'uint8',
-      },
+      request: { to: tokens.USDT, chainId, data: '0x313ce567' }, // `decimals` fn selector
+      response: { value: '6', abiType: 'uint8' },
     },
   ]
 
   const prices: GetPriceMock[] = [
     {
-      request: {
-        token: tokens.aUSDC,
-        chainId,
-      },
+      request: { token: tokens.aUSDC, chainId },
       response: ['1000000'],
     },
     {
-      request: {
-        token: tokens.USDC,
-        chainId,
-      },
+      request: { token: tokens.USDC, chainId },
       response: ['1000000'],
     },
     {
-      request: {
-        token: tokens.USDT,
-        chainId,
-      },
+      request: { token: tokens.USDT, chainId },
       response: ['1000000'],
     },
   ]
 
-  const buildTokenBalances = ({
+  const buildRelevantTokens = ({
     aUsdcSmartAccountBalance,
     usdcUserBalance,
     aUsdcUserBalance,
@@ -110,15 +94,15 @@ describe('Task', () => {
     },
   ]
 
-  describe('when all balances are present', () => {
-    const balances = buildTokenBalances({
+  describe('when all relevant tokens are present', () => {
+    const relevantTokens = buildRelevantTokens({
       aUsdcSmartAccountBalance: '1000000',
       usdcUserBalance: '1000000',
       aUsdcUserBalance: '1000000',
     })
 
     it('produces claim, swap, and transfer', async () => {
-      const intents = await runTask(taskDir, context, { inputs, balances, prices, calls })
+      const intents = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
 
       const claimIntent = intents.find((i) => i.type === 'transfer')
       const swapIntent = intents.find((i) => i.type === 'swap')
@@ -130,16 +114,16 @@ describe('Task', () => {
     })
   })
 
-  describe('when all balances are not present', () => {
+  describe('when all relevant tokens are not present', () => {
     describe('when there is only aUSDC in the smart account', () => {
-      const balances = buildTokenBalances({
+      const relevantTokens = buildRelevantTokens({
         aUsdcSmartAccountBalance: '1000000',
         usdcUserBalance: '0',
         aUsdcUserBalance: '0',
       })
 
       it('only produces a claim intent', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, balances, prices, calls })) as Call[]
+        const intents = (await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })) as Call[]
         expect(intents).to.have.lengthOf(1)
 
         expect(intents[0].type).to.equal('call')
@@ -149,14 +133,14 @@ describe('Task', () => {
 
     describe('when there is only USDC in the user account', () => {
       const amount = '1000000'
-      const balances = buildTokenBalances({
+      const relevantTokens = buildRelevantTokens({
         aUsdcSmartAccountBalance: '0',
         usdcUserBalance: amount,
         aUsdcUserBalance: '0',
       })
 
       it('only produces a swap intent', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, balances, prices, calls })) as Swap[]
+        const intents = (await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })) as Swap[]
         expect(intents).to.have.lengthOf(1)
 
         expect(intents[0].type).to.equal('swap')
@@ -169,14 +153,14 @@ describe('Task', () => {
 
     describe('when there is only aUSDC in the user account', () => {
       const amount = '1000000'
-      const balances = buildTokenBalances({
+      const relevantTokens = buildRelevantTokens({
         aUsdcSmartAccountBalance: '0',
         usdcUserBalance: '0',
         aUsdcUserBalance: amount,
       })
 
       it('only produces a transfer intent', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, prices, balances, calls })) as Transfer[]
+        const intents = (await runTask(taskDir, context, { inputs, prices, relevantTokens, calls })) as Transfer[]
         expect(intents).to.have.lengthOf(1)
 
         expect(intents[0].type).to.equal('transfer')
@@ -186,15 +170,15 @@ describe('Task', () => {
       })
     })
 
-    describe('when all balances are zero', () => {
-      const balances = buildTokenBalances({
+    describe('when all relevantTokens are zero', () => {
+      const relevantTokens = buildRelevantTokens({
         aUsdcSmartAccountBalance: '0',
         usdcUserBalance: '0',
         aUsdcUserBalance: '0',
       })
 
       it('does not produce any intents', async () => {
-        const intents = await runTask(taskDir, context, { inputs, balances, prices, calls })
+        const intents = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
         expect(intents).to.be.empty
       })
     })
