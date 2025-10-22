@@ -25,7 +25,7 @@ describe('Task', () => {
         subgraphId: inputs.subgraphId,
         query: `
   {
-    pair(where: { token0: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", token1: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" }) {
+    pools(where: { token0: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", token1: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" }) {
       token0Price   # token0 per token1
       token1Price   # token1 per token0
     }
@@ -33,7 +33,7 @@ describe('Task', () => {
       },
       response: {
         blockNumber: 1,
-        data: '{ "pairs": [{ "token0Price": "4119.946843278424527854752689641976", "token1Price": "0.000242721578224115053025889330520782" }] }',
+        data: '{ "pools": [{ "token0Price": "4119.946843278424527854752689641976", "token1Price": "0.000242721578224115053025889330520782" }] }',
       },
     },
   ]

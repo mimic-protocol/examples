@@ -5,7 +5,7 @@ import { ERC20 } from './types/ERC20'
 import { inputs } from './types'
 
 @json
-class UniswapPair {
+class UniswapPool {
   constructor(
     public token0Price: string,
     public token1Price: string
@@ -13,8 +13,8 @@ class UniswapPair {
 }
 
 @json
-class UniswapPairsData {
-  constructor(public pairs: UniswapPair[]) {}
+class UniswapPoolsData {
+  constructor(public pools: UniswapPool[]) {}
 }
 
 const PRICE_PRECISION: u8 = 40
@@ -53,18 +53,18 @@ function getTokenPrice(chainId: i32, subgraphId: string, tokenIn: Address, token
 
   const query = `
   {
-    pair(where: { token0: "${token0.toString()}", token1: "${token1.toString()}" }) {
+    pools(where: { token0: "${token0.toString()}", token1: "${token1.toString()}" }) {
       token0Price   # token0 per token1
       token1Price   # token1 per token0
     }
   }`
 
   const response = environment.subgraphQuery(chainId, subgraphId, query, null)
-  const data = JSON.parse<UniswapPairsData>(response.data)
+  const data = JSON.parse<UniswapPoolsData>(response.data)
 
   if (tokenIn == token0 && tokenOut === token1) {
-    return BigInt.fromStringDecimal(data.pairs[0].token1Price, PRICE_PRECISION)
+    return BigInt.fromStringDecimal(data.pools[0].token1Price, PRICE_PRECISION)
   } else {
-    return BigInt.fromStringDecimal(data.pairs[0].token0Price, PRICE_PRECISION)
+    return BigInt.fromStringDecimal(data.pools[0].token0Price, PRICE_PRECISION)
   }
 }
