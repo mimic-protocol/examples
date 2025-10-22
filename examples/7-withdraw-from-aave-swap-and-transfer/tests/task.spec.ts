@@ -72,7 +72,12 @@ describe('Task', () => {
         tokenFilter: 0,
         tokens: [{ address: tokens.aUSDC, chainId }],
       },
-      response: [[{ token: { address: tokens.aUSDC, chainId }, amount: aUsdcSmartAccountBalance }]],
+      response: [
+        {
+          timestamp: Date.now(),
+          balances: [{ token: { address: tokens.aUSDC, chainId }, balance: aUsdcSmartAccountBalance }],
+        },
+      ],
     },
     {
       request: {
@@ -86,10 +91,13 @@ describe('Task', () => {
         ],
       },
       response: [
-        [
-          { token: { address: tokens.USDC, chainId }, amount: usdcUserBalance },
-          { token: { address: tokens.aUSDC, chainId }, amount: aUsdcUserBalance },
-        ],
+        {
+          timestamp: Date.now(),
+          balances: [
+            { token: { address: tokens.USDC, chainId }, balance: usdcUserBalance },
+            { token: { address: tokens.aUSDC, chainId }, balance: aUsdcUserBalance },
+          ],
+        },
       ],
     },
   ]
