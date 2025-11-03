@@ -1,0 +1,10 @@
+version: 1.0.0
+name: DCA
+description: Dollar-cost averaging task that swaps tokenIn to tokenOut
+inputs:
+  - chainId: uint32
+  - tokenIn: address
+  - tokenOut: address
+  - amountDecimal: string  # "1.5" = 1.5 tokenIn
+  - slippageBps: uint16    # 100 = 1%
+  - recipient: address
