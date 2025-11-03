@@ -1,3 +1,4 @@
+import { Chains, OpType } from '@mimicprotocol/sdk'
 import {
   Call,
   Context,
@@ -11,9 +12,9 @@ import {
 import { expect } from 'chai'
 
 describe('Task', () => {
-  const taskDir = './'
+  const taskDir = './build'
 
-  const chainId = 10 // Optimism
+  const chainId = Chains.Optimism
 
   const tokens = {
     aUSDC: '0x625e7708f30ca75bfd92586e17077590c60eb4cd',
@@ -35,7 +36,7 @@ describe('Task', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: { to: tokens.USDT, chainId, data: '0x313ce567' }, // `decimals` fn selector
+      request: { to: tokens.USDT, chainId, fnSelector: '0x313ce567' }, // `decimals`
       response: { value: '6', abiType: 'uint8' },
     },
   ]
@@ -74,7 +75,7 @@ describe('Task', () => {
       },
       response: [
         {
-          timestamp: Date.now(),
+          timestamp: context.timestamp!,
           balances: [{ token: { address: tokens.aUSDC, chainId }, balance: aUsdcSmartAccountBalance }],
         },
       ],
@@ -92,7 +93,7 @@ describe('Task', () => {
       },
       response: [
         {
-          timestamp: Date.now(),
+          timestamp: context.timestamp!,
           balances: [
             { token: { address: tokens.USDC, chainId }, balance: usdcUserBalance },
             { token: { address: tokens.aUSDC, chainId }, balance: aUsdcUserBalance },
@@ -110,11 +111,11 @@ describe('Task', () => {
     })
 
     it('produces claim, swap, and transfer', async () => {
-      const intents = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+      const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
 
-      const claimIntent = intents.find((i) => i.type === 'transfer')
-      const swapIntent = intents.find((i) => i.type === 'swap')
-      const transferIntent = intents.find((i) => i.type === 'call')
+      const claimIntent = result.intents.find((i) => i.op === OpType.EvmCall)
+      const swapIntent = result.intents.find((i) => i.op === OpType.Swap)
+      const transferIntent = result.intents.find((i) => i.op === OpType.Transfer)
 
       expect(claimIntent).to.exist
       expect(swapIntent).to.exist
@@ -131,10 +132,14 @@ describe('Task', () => {
       })
 
       it('only produces a claim intent', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })) as Call[]
+        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        expect(result.success).to.be.true
+        expect(result.timestamp).to.be.equal(context.timestamp)
+
+        const intents = result.intents as Call[]
         expect(intents).to.have.lengthOf(1)
 
-        expect(intents[0].type).to.equal('call')
+        expect(intents[0].op).to.equal(OpType.EvmCall)
         expect(intents[0].user).to.equal(inputs.smartAccount)
       })
     })
@@ -148,10 +153,14 @@ describe('Task', () => {
       })
 
       it('only produces a swap intent', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })) as Swap[]
+        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        expect(result.success).to.be.true
+        expect(result.timestamp).to.be.equal(context.timestamp)
+
+        const intents = result.intents as Swap[]
         expect(intents).to.have.lengthOf(1)
 
-        expect(intents[0].type).to.equal('swap')
+        expect(intents[0].op).to.equal(OpType.Swap)
         expect(intents[0].user).to.equal(context.user)
         expect(intents[0].tokensIn[0].token).to.equal(tokens.USDC)
         expect(intents[0].tokensIn[0].amount).to.equal(amount)
@@ -168,10 +177,14 @@ describe('Task', () => {
       })
 
       it('only produces a transfer intent', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, prices, relevantTokens, calls })) as Transfer[]
+        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        expect(result.success).to.be.true
+        expect(result.timestamp).to.be.equal(context.timestamp)
+
+        const intents = result.intents as Transfer[]
         expect(intents).to.have.lengthOf(1)
 
-        expect(intents[0].type).to.equal('transfer')
+        expect(intents[0].op).to.equal(OpType.Transfer)
         expect(intents[0].transfers[0].recipient).to.equal(inputs.smartAccount)
         expect(intents[0].transfers[0].amount).to.equal(amount)
         expect(intents[0].user).to.equal(context.user)
@@ -186,8 +199,9 @@ describe('Task', () => {
       })
 
       it('does not produce any intents', async () => {
-        const intents = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
-        expect(intents).to.be.empty
+        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        expect(result.success).to.be.true
+        expect(result.intents).to.be.empty
       })
     })
   })

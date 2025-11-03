@@ -1,8 +1,9 @@
+import { OpType } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, runTask, SubgraphQueryMock, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
-  const taskDir = './'
+  const taskDir = './build'
 
   const context: Context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
@@ -21,6 +22,7 @@ describe('Task', () => {
   const subgraphQueries: SubgraphQueryMock[] = [
     {
       request: {
+        timestamp: context.timestamp!,
         chainId: inputs.chainId,
         subgraphId: inputs.subgraphId,
         query: `
@@ -43,7 +45,8 @@ describe('Task', () => {
       request: {
         to: inputs.tokenIn,
         chainId: inputs.chainId,
-        data: '0x70a08231', // `balanceOf` fn selector
+        fnSelector: '0x70a08231', // `balanceOf`
+        params: [{ value: context.user!, abiType: 'address' }],
       },
       response: {
         value: balance,
@@ -54,7 +57,7 @@ describe('Task', () => {
       request: {
         to: inputs.tokenIn,
         chainId: inputs.chainId,
-        data: '0x313ce567', // `decimals` fn selector
+        fnSelector: '0x313ce567', // `decimals`
       },
       response: {
         value: '6',
@@ -65,7 +68,7 @@ describe('Task', () => {
       request: {
         to: inputs.tokenOut,
         chainId: inputs.chainId,
-        data: '0x313ce567', // `decimals` fn selector
+        fnSelector: '0x313ce567', // `decimals`
       },
       response: {
         value: '18',
@@ -79,10 +82,14 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('produces the expected intents', async () => {
-      const intents = (await runTask(taskDir, context, { inputs, calls, subgraphQueries })) as Swap[]
+      const result = await runTask(taskDir, context, { inputs, calls, subgraphQueries })
+      expect(result.success).to.be.true
+      expect(result.timestamp).to.be.equal(context.timestamp)
+
+      const intents = result.intents as Swap[]
       expect(intents).to.have.lengthOf(1)
 
-      expect(intents[0].type).to.be.equal('swap')
+      expect(intents[0].op).to.equal(OpType.Swap)
       expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
       expect(intents[0].user).to.be.equal(context.user)
       expect(intents[0].sourceChain).to.be.equal(inputs.chainId)
@@ -103,13 +110,12 @@ describe('Task', () => {
     const balance = '0'
     const calls = buildCalls(balance)
 
-    it('does not produce any intent', async () => {
-      try {
-        await runTask(taskDir, context, { inputs, calls, subgraphQueries })
-        fail()
-      } catch (error) {
-        expect(error.message).to.include('No amount in to swap')
-      }
+    it('throws an error', async () => {
+      const result = await runTask(taskDir, context, { inputs, calls, subgraphQueries })
+      expect(result.success).to.be.false
+
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.include('No amount in to swap')
     })
   })
 })

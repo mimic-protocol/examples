@@ -1,8 +1,9 @@
+import { OpType } from '@mimicprotocol/sdk'
 import { Context, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
-  const taskDir = './'
+  const taskDir = './build'
 
   const context: Context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
@@ -19,10 +20,14 @@ describe('Task', () => {
   }
 
   it('produces the expected intents', async () => {
-    const intents = (await runTask(taskDir, context, { inputs })) as Transfer[]
+    const result = await runTask(taskDir, context, { inputs })
+    expect(result.success).to.be.true
+    expect(result.timestamp).to.be.equal(context.timestamp)
+
+    const intents = result.intents as Transfer[]
     expect(intents).to.have.lengthOf(1)
 
-    expect(intents[0].type).to.be.equal('transfer')
+    expect(intents[0].op).to.be.equal(OpType.Transfer)
     expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
     expect(intents[0].user).to.be.equal(context.user)
     expect(intents[0].chainId).to.be.equal(inputs.chainId)
