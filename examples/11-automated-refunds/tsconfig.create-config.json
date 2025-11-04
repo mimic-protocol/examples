@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es2020",
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "Node16",
+    "esModuleInterop": true,
+    "moduleResolution": "node16",
+    "sourceMap": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/create-config.ts"
+  ]
+}
