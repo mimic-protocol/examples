@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 config()
 
-import { Client, EthersSigner, randomEvmAddress, TriggerType } from '@mimicprotocol/sdk'
+import { Client, EthersSigner, getNextCronDate, HOUR, randomEvmAddress, TriggerType } from '@mimicprotocol/sdk'
 import { Wallet } from 'ethers'
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -13,11 +13,16 @@ async function main() {
   const client = new Client({ signer })
 
   // Get task manifest from deployed task
-  const taskCid = 'QmPzY1KpVsYdT54Qm1ZHSinZaiM7gJKUjKyQVpjSGSKsMT' // Task must be deployed first
+  if (!process.env.TASK_CID) throw new Error('Missing TASK_CID in .env file')
+  const taskCid = process.env.TASK_CID
   const manifest = await client.tasks.getManifest(taskCid)
 
-  // Submit the signed task config to Mimic Protocol
   const { chainId, token, amount, recipient, maxFee } = getRefundData()
+  const schedule = '0 0 * * *' // At midnight UTC
+  const deltaMs = HOUR * 1000
+  const endDate = getNextCronDate(schedule).getTime() + deltaMs + 1 // 1 AM UTC
+
+  // Submit the signed task config to Mimic Protocol for one-time execution
   await client.configs.signAndCreate({
     description: `Refund execution - ${Date.now()}`,
     taskCid,
@@ -25,9 +30,9 @@ async function main() {
     manifest,
     trigger: {
       type: TriggerType.Cron,
-      schedule: '0 0 * * *', // Everyday at midnight
+      schedule,
       delta: '1h',
-      endDate: 0,
+      endDate,
     },
     input: { chainId, token, amount, recipient, maxFee },
     executionFeeLimit: '0',
