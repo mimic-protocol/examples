@@ -26,17 +26,11 @@ describe('Task', () => {
 
   const prices: GetPriceMock[] = [
     {
-      request: {
-        token: USDC,
-        chainId,
-      },
+      request: { token: USDC, chainId },
       response: [fp(1).toString()], // 1 USDC = 1 USD
     },
     {
-      request: {
-        token: WETH,
-        chainId,
-      },
+      request: { token: WETH, chainId },
       response: [fp(4200).toString()], // 1 WETH = 4200 USD
     },
   ]
