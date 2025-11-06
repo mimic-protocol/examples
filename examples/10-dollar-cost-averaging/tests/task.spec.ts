@@ -19,7 +19,7 @@ describe('Task', () => {
     chainId,
     tokenIn: USDC,
     tokenOut: WETH,
-    amountDecimal: '10.5', // 10.5 USDC
+    amount: '10.5', // 10.5 USDC
     slippageBps: 100, // 1%
     recipient: context.user!,
   }
@@ -81,7 +81,7 @@ describe('Task', () => {
 
     expect(result.logs).to.have.lengthOf(3)
     expect(result.logs[0]).to.be.equal(
-      `[Info] Starting DCA swap: amountFromToken=${inputs.amountDecimal}, slippageBps=${inputs.slippageBps}, chainId=${chainId}, recipient=${context.user}`
+      `[Info] Starting DCA swap: amountFromToken=${inputs.amount}, slippageBps=${inputs.slippageBps}, chainId=${chainId}, recipient=${context.user}`
     )
     expect(result.logs[1]).to.be.equal(
       `[Info] Calculated minOut: 0.002475 WETH (equivalent=0.0025 WETH, slippageBps=${inputs.slippageBps})`

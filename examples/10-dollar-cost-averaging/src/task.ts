@@ -5,7 +5,7 @@ import { inputs } from './types'
 export default function main(): void {
   // Log input parameters
   log.info('Starting DCA swap: amountFromToken={}, slippageBps={}, chainId={}, recipient={}', [
-    inputs.amountDecimal,
+    inputs.amount,
     inputs.slippageBps.toString(),
     inputs.chainId.toString(),
     inputs.recipient.toString(),
@@ -16,7 +16,7 @@ export default function main(): void {
   const tokenOut = ERC20Token.fromAddress(inputs.tokenOut, inputs.chainId)
 
   // Create amount from decimal string and estimatate amount out
-  const amountIn = TokenAmount.fromStringDecimal(tokenIn, inputs.amountDecimal)
+  const amountIn = TokenAmount.fromStringDecimal(tokenIn, inputs.amount)
   const amountOut = amountIn.toTokenAmount(tokenOut)
 
   // Apply slippage to calculate the expected minimum amount out
