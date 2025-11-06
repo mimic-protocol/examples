@@ -1,8 +1,9 @@
 import { config } from 'dotenv'
 config()
 
-import { Client, EthersSigner, getNextCronDate, HOUR, randomEvmAddress, TriggerType } from '@mimicprotocol/sdk'
+import { Client, EthersSigner, getNextCronDate, HOUR, randomEvmAddress, Sort, TriggerType } from '@mimicprotocol/sdk'
 import { Wallet } from 'ethers'
+import { inc } from 'semver'
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
@@ -17,6 +18,12 @@ async function main() {
   const taskCid = process.env.TASK_CID
   const manifest = await client.tasks.getManifest(taskCid)
 
+  // Increment config version
+  const latestConfig = await client.configs.get({ taskCid, sort: Sort.desc, limit: 1 })
+  const version = latestConfig.length ? inc(latestConfig[0].version, 'patch') : '0.0.1'
+  if (!version) throw new Error('Invalid config version')
+
+  // Get inputs and calculate trigger values
   const { chainId, token, amount, recipient, maxFee } = getRefundData()
   const schedule = '0 0 * * *' // At midnight UTC
   const deltaMs = HOUR * 1000
@@ -26,7 +33,7 @@ async function main() {
   await client.configs.signAndCreate({
     description: `Refund execution - ${Date.now()}`,
     taskCid,
-    version: '1.0.0',
+    version,
     manifest,
     trigger: {
       type: TriggerType.Cron,
