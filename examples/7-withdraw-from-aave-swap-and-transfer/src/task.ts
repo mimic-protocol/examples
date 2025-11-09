@@ -6,9 +6,9 @@ import {
   ListType,
   Optimism,
   SwapBuilder,
+  SwapTokenIn,
+  SwapTokenOut,
   TokenAmount,
-  TokenIn,
-  TokenOut,
   TransferBuilder,
   TransferData,
   USD,
@@ -63,8 +63,8 @@ export default function main(): void {
     // Swap USDC for aUSDC in user EOA
     const minAmount = usdcUser.amount.times(BigInt.fromI32(97)).div(BigInt.fromI32(100))
     SwapBuilder.forChain(chainId)
-      .addTokenIn(new TokenIn(USDC.address, usdcUser.amount))
-      .addTokenOut(new TokenOut(aUSDC.address, minAmount, context.user))
+      .addTokenIn(new SwapTokenIn(USDC.address, usdcUser.amount))
+      .addTokenOut(new SwapTokenOut(aUSDC.address, minAmount, context.user))
       .build()
       .send()
   }
