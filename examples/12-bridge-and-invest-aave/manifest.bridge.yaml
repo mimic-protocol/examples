@@ -1,0 +1,11 @@
+version: 1.0.0
+name: Bridge USDC and emit an event
+description: Bridge USDC between Arbitrum, Base and Optimism, and emit a custom event to trigger another task
+inputs:
+  - sourceChain: uint32
+  - destinationChain: uint32
+  - smartAccount: address # Important: The smart account should exist in both chains
+  - amount: string
+  - minAmountOut: string
+  - feeToken: address
+  - maxFee: string

@@ -1,0 +1,43 @@
+{
+  "name": "@mimicprotocol/12-bridge-and-invest-aave",
+  "version": "0.0.1",
+  "license": "Unlicensed",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "yarn codegen && yarn compile",
+    "codegen": "yarn codegen:bridge && yarn codegen:invest",
+    "codegen:bridge": "yarn mimic codegen -m manifest.bridge.yaml -o ./src/types/bridge",
+    "codegen:invest": "yarn mimic codegen -m manifest.invest.yaml -o ./src/types/invest",
+    "compile": "yarn compile:bridge && yarn compile:invest",
+    "compile:bridge": "mimic compile -t src/bridge.ts -m manifest.bridge.yaml -o ./build/bridge",
+    "compile:invest": "mimic compile -t src/invest.ts -m manifest.invest.yaml -o ./build/invest",
+    "deploy:bridge": "yarn codegen:bridge && yarn compile:bridge && mimic deploy --input ./build/bridge --output ./build/bridge --skip-compile",
+    "deploy:invest": "yarn codegen:invest && yarn compile:invest && mimic deploy --input ./build/invest --output ./build/invest --skip-compile",
+    "test": "yarn build && mimic test --skipCompile",
+    "create-config:invest": "tsc -p tsconfig.create-config.json && tsx src/create-config.invest.ts",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "dotenv": "^17.0.0",
+    "ethers": "^6.13.5",
+    "semver": "^7.7.3"
+  },
+  "devDependencies": {
+    "@mimicprotocol/cli": "latest",
+    "@mimicprotocol/lib-ts": "latest",
+    "@mimicprotocol/sdk": "latest",
+    "@mimicprotocol/test-ts": "latest",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.5",
+    "assemblyscript": "0.27.36",
+    "chai": "^4.3.7",
+    "eslint": "^9.10.0",
+    "json-as": "1.1.7",
+    "mocha": "^10.2.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "visitor-as": "0.11.4"
+  }
+}
