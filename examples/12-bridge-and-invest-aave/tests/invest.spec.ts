@@ -8,7 +8,7 @@ import {
   randomSig,
   TriggerType,
 } from '@mimicprotocol/sdk'
-import { Call, Context, ContractCallMock, runTask } from '@mimicprotocol/test-ts'
+import { Call, Context, ContractCallMock, Inputs, runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, concat } from 'ethers'
 
@@ -65,41 +65,76 @@ describe('Invest', () => {
     },
   ]
 
-  it('produces the expected intents', async () => {
-    const result = await runTask(taskDir, context, { inputs, calls })
-    expect(result.success).to.be.true
-    expect(result.timestamp).to.be.equal(context.timestamp)
+  const itThrowsAnError = (context: Context, inputs: Inputs, error: string): void => {
+    it('throws an error', async () => {
+      const result = await runTask(taskDir, context, { inputs, calls })
+      expect(result.success).to.be.false
+      expect(result.intents).to.have.lengthOf(0)
 
-    const intents = result.intents as Call[]
-    expect(intents).to.have.lengthOf(1)
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.include(error)
+    })
+  }
 
-    expect(intents[0].op).to.be.equal(OpType.EvmCall)
-    expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-    expect(intents[0].user).to.be.equal(inputs.smartAccount)
-    expect(intents[0].chainId).to.be.equal(inputs.chainId)
+  describe('when the chain is supported', () => {
+    describe('when the trigger is event', () => {
+      describe('when the event user is the smart account', () => {
+        it('produces the expected intents', async () => {
+          const result = await runTask(taskDir, context, { inputs, calls })
+          expect(result.success).to.be.true
+          expect(result.timestamp).to.be.equal(context.timestamp)
 
-    expect(intents[0].maxFees).to.have.lengthOf(1)
-    expect(intents[0].maxFees[0].token).to.be.equal(inputs.feeToken)
-    expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, decimals).toString())
+          const intents = result.intents as Call[]
+          expect(intents).to.have.lengthOf(1)
 
-    expect(intents[0].calls).to.have.lengthOf(2)
+          expect(intents[0].op).to.be.equal(OpType.EvmCall)
+          expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
+          expect(intents[0].user).to.be.equal(inputs.smartAccount)
+          expect(intents[0].chainId).to.be.equal(inputs.chainId)
 
-    const firstCall = intents[0].calls[0]
-    expect(firstCall.target).to.be.equal(USDC)
-    expect(firstCall.value).to.be.equal('0')
+          expect(intents[0].maxFees).to.have.lengthOf(1)
+          expect(intents[0].maxFees[0].token).to.be.equal(inputs.feeToken)
+          expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, decimals).toString())
 
-    const approveData = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [aavePool, amount])
-    expect(firstCall.data).to.be.equal(concat(['0x095ea7b3', approveData])) // approve
+          expect(intents[0].calls).to.have.lengthOf(2)
 
-    const secondCall = intents[0].calls[1]
-    expect(secondCall.target).to.be.equal(aavePool)
-    expect(secondCall.value).to.be.equal('0')
+          const firstCall = intents[0].calls[0]
+          expect(firstCall.target).to.be.equal(USDC)
+          expect(firstCall.value).to.be.equal('0')
 
-    const supplyData = AbiCoder.defaultAbiCoder().encode(
-      ['address', 'uint256', 'address', 'uint16'],
-      [USDC, amount, smartAccount, 0]
-    )
-    expect(secondCall.data).to.be.equal(concat(['0x617ba037', supplyData])) // supply
+          const approveData = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [aavePool, amount])
+          expect(firstCall.data).to.be.equal(concat(['0x095ea7b3', approveData])) // approve
+
+          const secondCall = intents[0].calls[1]
+          expect(secondCall.target).to.be.equal(aavePool)
+          expect(secondCall.value).to.be.equal('0')
+
+          const supplyData = AbiCoder.defaultAbiCoder().encode(
+            ['address', 'uint256', 'address', 'uint16'],
+            [USDC, amount, smartAccount, 0]
+          )
+          expect(secondCall.data).to.be.equal(concat(['0x617ba037', supplyData])) // supply
+        })
+      })
+
+      describe('when the event user is not the smart account', () => {
+        const inputsOtherSmartAccount = { ...inputs, smartAccount: randomEvmAddress() }
+
+        itThrowsAnError(context, inputsOtherSmartAccount, 'Intent user not smart account')
+      })
+    })
+
+    describe('when the trigger is not event', () => {
+      const cronContext = { ...context, trigger: { ...trigger, type: TriggerType.Cron } }
+
+      itThrowsAnError(cronContext, inputs, 'Trigger not event')
+    })
+  })
+
+  describe('when the chain is not supported', () => {
+    const inputsUnsupportedChain = { ...inputs, chainId: Chains.Mainnet }
+
+    itThrowsAnError(context, inputsUnsupportedChain, 'Invalid chain')
   })
 })
 

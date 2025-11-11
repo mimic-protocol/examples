@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, runTask, Swap } from '@mimicprotocol/test-ts'
+import { Context, ContractCallMock, Inputs, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, keccak256, toUtf8Bytes } from 'ethers'
 
@@ -47,41 +47,68 @@ describe('Bridge', () => {
     },
   ]
 
-  it('produces the expected intents', async () => {
-    const result = await runTask(taskDir, context, { inputs, calls })
-    expect(result.success).to.be.true
-    expect(result.timestamp).to.be.equal(context.timestamp)
+  const itThrowsAnError = (inputs: Inputs, error: string): void => {
+    it('throws an error', async () => {
+      const result = await runTask(taskDir, context, { inputs, calls })
+      expect(result.success).to.be.false
+      expect(result.intents).to.have.lengthOf(0)
 
-    const intents = result.intents as Swap[]
-    expect(intents).to.have.lengthOf(1)
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.include(error)
+    })
+  }
 
-    expect(intents[0].op).to.be.equal(OpType.Swap)
-    expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-    expect(intents[0].user).to.be.equal(inputs.smartAccount)
-    expect(intents[0].sourceChain).to.be.equal(sourceChain)
-    expect(intents[0].destinationChain).to.be.equal(destinationChain)
+  describe('when the chains are supported', () => {
+    describe('when the chains are different', () => {
+      it('produces the expected intents', async () => {
+        const result = await runTask(taskDir, context, { inputs, calls })
+        expect(result.success).to.be.true
+        expect(result.timestamp).to.be.equal(context.timestamp)
 
-    const amount = fp(inputs.amount, decimals).toString()
-    expect(intents[0].tokensIn).to.have.lengthOf(1)
-    expect(intents[0].tokensIn[0].token).to.be.equal(arbitrumUsdc)
-    expect(intents[0].tokensIn[0].amount).to.be.equal(amount)
+        const intents = result.intents as Swap[]
+        expect(intents).to.have.lengthOf(1)
 
-    const minAmountOut = fp(inputs.minAmountOut, decimals).toString()
-    expect(intents[0].tokensOut).to.have.lengthOf(1)
-    expect(intents[0].tokensOut[0].token).to.be.equal(optimismUsdc)
-    expect(intents[0].tokensOut[0].minAmount).to.be.equal(minAmountOut)
-    expect(intents[0].tokensOut[0].recipient).to.be.equal(inputs.smartAccount)
+        expect(intents[0].op).to.be.equal(OpType.Swap)
+        expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
+        expect(intents[0].user).to.be.equal(inputs.smartAccount)
+        expect(intents[0].sourceChain).to.be.equal(sourceChain)
+        expect(intents[0].destinationChain).to.be.equal(destinationChain)
 
-    expect(intents[0].maxFees).to.have.lengthOf(1)
-    expect(intents[0].maxFees[0].token).to.be.equal(inputs.feeToken)
-    expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, decimals).toString())
+        const amount = fp(inputs.amount, decimals).toString()
+        expect(intents[0].tokensIn).to.have.lengthOf(1)
+        expect(intents[0].tokensIn[0].token).to.be.equal(arbitrumUsdc)
+        expect(intents[0].tokensIn[0].amount).to.be.equal(amount)
 
-    expect(intents[0].events).to.have.lengthOf(1)
+        const minAmountOut = fp(inputs.minAmountOut, decimals).toString()
+        expect(intents[0].tokensOut).to.have.lengthOf(1)
+        expect(intents[0].tokensOut[0].token).to.be.equal(optimismUsdc)
+        expect(intents[0].tokensOut[0].minAmount).to.be.equal(minAmountOut)
+        expect(intents[0].tokensOut[0].recipient).to.be.equal(inputs.smartAccount)
 
-    const topic = keccak256(toUtf8Bytes('Bridged USDC'))
-    expect(intents[0].events[0].topic).to.be.equal(topic)
+        expect(intents[0].maxFees).to.have.lengthOf(1)
+        expect(intents[0].maxFees[0].token).to.be.equal(inputs.feeToken)
+        expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, decimals).toString())
 
-    const data = AbiCoder.defaultAbiCoder().encode(['address'], [optimismUsdc])
-    expect(intents[0].events[0].data).to.be.equal(data)
+        expect(intents[0].events).to.have.lengthOf(1)
+
+        const topic = keccak256(toUtf8Bytes('Bridged USDC'))
+        expect(intents[0].events[0].topic).to.be.equal(topic)
+
+        const data = AbiCoder.defaultAbiCoder().encode(['address'], [optimismUsdc])
+        expect(intents[0].events[0].data).to.be.equal(data)
+      })
+    })
+
+    describe('when the chains are the same', () => {
+      const inputsSameChain = { ...inputs, destinationChain: inputs.sourceChain }
+
+      itThrowsAnError(inputsSameChain, 'Single-chain swap not supported')
+    })
+  })
+
+  describe('when the chains are not supported', () => {
+    const inputsUnsupportedChain = { ...inputs, destinationChain: Chains.Mainnet }
+
+    itThrowsAnError(inputsUnsupportedChain, 'Invalid chain')
   })
 })
