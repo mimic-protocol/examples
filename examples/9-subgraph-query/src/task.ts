@@ -51,13 +51,7 @@ function getTokenPrice(chainId: i32, subgraphId: string, tokenIn: Address, token
     token1 = tokenIn
   }
 
-  const query = `
-  {
-    pools(where: { token0: "${token0.toString()}", token1: "${token1.toString()}" }) {
-      token0Price   # token0 per token1
-      token1Price   # token1 per token0
-    }
-  }`
+  const query = `{pools(where: { token0: "${token0.toString()}", token1: "${token1.toString()}" }) {token0Price  token1Price}}`
 
   const response = environment.subgraphQuery(chainId, subgraphId, query, null)
   const data = JSON.parse<UniswapPoolsData>(response.data)
