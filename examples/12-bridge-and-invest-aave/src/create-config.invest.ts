@@ -47,7 +47,7 @@ async function main() {
     type: TriggerType.Event as const,
     contract: MIMIC_PROTOCOL_SETTLER,
     topics: [
-      [INTENT_EXECUTED_TOPIC],
+      [INTENT_EXECUTED_TOPIC], // The event emitted by the Settler
       [USER_TOPIC], // Important: To prevent other users from triggering this task
       [BRIDGED_TOPIC], // Emitted by the bridge task
     ],

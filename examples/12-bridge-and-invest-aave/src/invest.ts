@@ -33,9 +33,11 @@ export default function main(): void {
   // Get the token and the amount from the event emitted by the task that triggered this one
   const tokenStr = evm.decode(new EvmDecodeParam('address', event.data.toHexString()))
   const token = Address.fromString(tokenStr)
-  const output = evm.decode(new EvmDecodeParam('uint256[]', event.output.toHexString()))
-  const amountsOut = JSON.parse<string[]>(output)
-  const amount = BigInt.fromString(amountsOut[0])
+
+  const amountsStr = evm.decode(new EvmDecodeParam('uint256[]', event.output.toHexString()))
+  const amounts = JSON.parse<string[]>(amountsStr)
+  if (amounts.length == 0) throw new Error('Empty amounts array')
+  const amount = BigInt.fromString(amounts[0])
 
   const feeToken = new ERC20Token(inputs.feeToken, chainId)
   const maxFee = TokenAmount.fromStringDecimal(feeToken, inputs.maxFee)
@@ -43,7 +45,7 @@ export default function main(): void {
   const approveData = ERC20Utils.encodeApprove(aaveV3Pool, amount)
   const supplyData = AavePoolUtils.encodeSupply(token, amount, smartAccount, 0)
 
-  // Deposit USDC owned by the smart account
+  // Give approval and deposit the tokens, owned by the smart account
   EvmCallBuilder.forChain(chainId)
     .addCall(token, approveData)
     .addCall(aaveV3Pool, supplyData)

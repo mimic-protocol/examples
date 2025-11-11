@@ -20,14 +20,15 @@ export default function main(): void {
   if (sourceChain == destinationChain) throw new Error('Single-chain swap not supported')
 
   const tokenIn = getUsdc(sourceChain)
-  const tokenOut = getUsdc(destinationChain)
-
   const tokenAmountIn = TokenAmount.fromStringDecimal(tokenIn, inputs.amount)
+
+  const tokenOut = getUsdc(destinationChain)
   const tokenAmountOut = TokenAmount.fromStringDecimal(tokenOut, inputs.minAmountOut)
 
   const feeToken = new ERC20Token(inputs.feeToken, inputs.destinationChain)
   const maxFee = TokenAmount.fromStringDecimal(feeToken, inputs.maxFee)
 
+  // Set topic hash and encode tokenOut address as extra data
   const topic = evm.keccak('Bridged USDC')
   const data = evm.encode([EvmEncodeParam.fromValue('address', tokenAmountOut.token.address)])
 
