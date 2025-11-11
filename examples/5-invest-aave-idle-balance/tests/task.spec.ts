@@ -1,6 +1,13 @@
-import { OpType } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
+import { EvmCallIntent, OpType } from '@mimicprotocol/sdk'
+import { Context, ContractCallMock, GetPriceMock, runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
+import { Interface } from 'ethers'
+
+import AavePool from '../abis/AavePool.json'
+import ERC20Abi from '../abis/ERC20.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
+const AavePoolInterface = new Interface(AavePool)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -14,11 +21,13 @@ describe('Task', () => {
   const inputs = {
     chainId: 10, // Optimism
     aToken: '0x625e7708f30ca75bfd92586e17077590c60eb4cd', // Aave Optimism USDC
-    slippage: 2, // 2%
+    smartAccount: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a1',
     thresholdUSD: 10, // 10 USD
+    maxFee: '0.1', // 0.1 USD
   }
 
   const underlyingToken = '0x7f5c764cbc14f9669b88837ca1490cca17c31607' // USDC
+  const pool = '0x794a61358d6845594f94dc1db02a252b5b4814ad' // Aave Pool
 
   const prices: GetPriceMock[] = [
     {
@@ -54,6 +63,17 @@ describe('Task', () => {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
+        fnSelector: '0x7535d246', // `POOL`
+      },
+      response: {
+        value: pool,
+        abiType: 'address',
+      },
+    },
+    {
+      request: {
+        to: inputs.aToken,
+        chainId: inputs.chainId,
         fnSelector: '0x313ce567', // `decimals`
       },
       response: {
@@ -80,7 +100,7 @@ describe('Task', () => {
         fnSelector: '0x70a08231', // `balanceOf`
         params: [
           {
-            value: context.user!,
+            value: inputs.smartAccount,
             abiType: 'address',
           },
         ],
@@ -138,27 +158,31 @@ describe('Task', () => {
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
-      const intents = result.intents as Swap[]
+      const intents = result.intents as EvmCallIntent[]
       expect(intents).to.have.lengthOf(1)
 
-      expect(intents[0].op).to.be.equal(OpType.Swap)
+      expect(intents[0].op).to.be.equal(OpType.EvmCall)
       expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-      expect(intents[0].user).to.be.equal(context.user)
-      expect(intents[0].sourceChain).to.be.equal(inputs.chainId)
-      expect(intents[0].destinationChain).to.be.equal(inputs.chainId)
+      expect(intents[0].user).to.be.equal(inputs.smartAccount)
+      expect(intents[0].chainId).to.be.equal(inputs.chainId)
 
-      expect(intents[0].tokensIn).to.have.lengthOf(1)
-      expect(intents[0].tokensIn[0].token).to.be.equal(underlyingToken)
-      expect(intents[0].tokensIn[0].amount).to.be.equal(balance)
+      const expectedApproveData = ERC20Interface.encodeFunctionData('approve', [pool, balance])
+      expect(intents[0].calls[0].target).to.be.equal(underlyingToken)
+      expect(intents[0].calls[0].value).to.be.equal('0')
+      expect(intents[0].calls[0].data).to.be.equal(expectedApproveData)
 
-      expect(intents[0].tokensOut).to.have.lengthOf(1)
-      expect(intents[0].tokensOut[0].token).to.be.equal(inputs.aToken)
-      expect(intents[0].tokensOut[0].minAmount).to.be.equal('10780000') // balance_in_ausdc * (1 - slippage) = 11 * 0.98 = 10.78
-      expect(intents[0].tokensOut[0].recipient).to.be.equal(context.user)
+      const expectedSupplyData = AavePoolInterface.encodeFunctionData('supply(address,uint256,address,uint16)', [
+        underlyingToken,
+        balance,
+        inputs.smartAccount,
+        0,
+      ])
+      expect(intents[0].calls[1].target).to.be.equal(pool)
+      expect(intents[0].calls[1].value).to.be.equal('0')
+      expect(intents[0].calls[1].data).to.be.equal(expectedSupplyData)
 
-      expect(result.logs).to.have.lengthOf(2)
+      expect(result.logs).to.have.lengthOf(1)
       expect(result.logs[0]).to.be.equal('[Info] Underlying balance in USD: 11')
-      expect(result.logs[1]).to.be.equal('[Info] Min amount out: 10.78 aOptUSDC')
     })
   })
 })

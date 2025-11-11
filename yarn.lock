@@ -391,9 +391,9 @@
   integrity sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==
 
 "@mimicprotocol/cli@latest":
-  version "0.0.1-rc.26"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.26.tgz#12bc896c077dea11e435acc12c93556bf662365b"
-  integrity sha512-L6VYi9JBE2KOojVaZ3iA+RPX/+gI0MmZet0C9bikd1w8Bdh0dhbDotKPQ29S5SWNBedIreIDJk6x4iKeIzb9iw==
+  version "0.0.1-rc.27"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/cli/-/cli-0.0.1-rc.27.tgz#9cfc225fa0e523b32ab67a3f8592cbe28ccf7706"
+  integrity sha512-19qaMxd7rfSJMKpOkIOCEg8+JkiKsQWYPufuj8mNh9Zi7c9Q7JP0E5NF6IVbiJ31SxJ7EW7AKThTZkYLWUtChA==
   dependencies:
     "@inquirer/prompts" "^7.2.4"
     "@oclif/core" "^4.2.2"
@@ -408,9 +408,9 @@
     zod "^3.24.1"
 
 "@mimicprotocol/lib-ts@latest":
-  version "0.0.1-rc.26"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.26.tgz#fcfe563893a67f47b75f968901fc2d9ff7885f39"
-  integrity sha512-A1R7DBcsJJ7rvBXXInt/1lkPc1fkCmef16gNFRjGS9lMuZNedm0MMUuUtiNEqcukTnp2t/czlz65LtqDeESS1Q==
+  version "0.0.1-rc.27"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.0.1-rc.27.tgz#6e129a5a693e8a453e9ed2cb11167280acef25c8"
+  integrity sha512-/82lfBXiKmxPsip8ACVDVySJn4h/ZznY6ymNHRtWu96AW4loyk1AL2w7JdtA8DGv74vbrXsqKESS2X32j1KXxQ==
   dependencies:
     as-base58 "^0.1.1"
     eslint-config-mimic "^0.0.3"
