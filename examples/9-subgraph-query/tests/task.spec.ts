@@ -23,13 +23,7 @@ describe('Task', () => {
       request: {
         chainId: inputs.chainId,
         subgraphId: inputs.subgraphId,
-        query: `
-  {
-    pools(where: { token0: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", token1: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" }) {
-      token0Price   # token0 per token1
-      token1Price   # token1 per token0
-    }
-  }`,
+        query: `{pools(where: { token0: "${inputs.tokenIn}", token1: "${inputs.tokenOut}" }) {token0Price  token1Price}}`,
       },
       response: {
         blockNumber: 1,
