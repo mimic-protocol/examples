@@ -1,5 +1,5 @@
 {
-  "name": "@mimicprotocol/3-transfer-balance-threshold",
+  "name": "@mimicprotocol/11-automated-refunds",
   "version": "0.0.1",
   "license": "Unlicensed",
   "private": true,
@@ -9,7 +9,13 @@
     "codegen": "mimic codegen",
     "compile": "mimic compile",
     "test": "mimic test",
+    "create-config": "tsc -p tsconfig.create-config.json && tsx src/create-config.ts",
     "lint": "eslint ."
+  },
+  "dependencies": {
+    "dotenv": "^17.0.0",
+    "ethers": "^6.13.5",
+    "semver": "^7.7.3"
   },
   "devDependencies": {
     "@mimicprotocol/cli": "latest",

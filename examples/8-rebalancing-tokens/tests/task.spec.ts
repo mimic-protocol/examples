@@ -1,8 +1,9 @@
-import { ContractCall, runTask, Swap } from '@mimicprotocol/test-ts'
+import { OpType } from '@mimicprotocol/sdk'
+import { ContractCallMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
-  const taskDir = './'
+  const taskDir = './build'
 
   const context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
@@ -25,16 +26,40 @@ describe('Task', () => {
     slippageBps: 50, // 0.50%
   }
 
-  const buildErc20Calls = (balanceWBTC: string, balanceWETH: string, balanceDAI: string): ContractCall[] => [
+  const buildErc20Calls = (balanceWBTC: string, balanceWETH: string, balanceDAI: string): ContractCallMock[] => [
     // WBTC
-    { request: { to: WBTC, chainId: 10, data: '0x70a08231' }, response: { value: balanceWBTC, abiType: 'uint256' } }, // balanceOf(user)
-    { request: { to: WBTC, chainId: 10, data: '0x313ce567' }, response: { value: '8', abiType: 'uint8' } }, // decimals
+    {
+      request: {
+        to: WBTC,
+        chainId: 10,
+        fnSelector: '0x70a08231', // balanceOf
+        params: [{ value: context.user, abiType: 'address' }],
+      },
+      response: { value: balanceWBTC, abiType: 'uint256' },
+    },
+    { request: { to: WBTC, chainId: 10, fnSelector: '0x313ce567' }, response: { value: '8', abiType: 'uint8' } }, // decimals
     // WETH
-    { request: { to: WETH, chainId: 10, data: '0x70a08231' }, response: { value: balanceWETH, abiType: 'uint256' } },
-    { request: { to: WETH, chainId: 10, data: '0x313ce567' }, response: { value: '18', abiType: 'uint8' } },
+    {
+      request: {
+        to: WETH,
+        chainId: 10,
+        fnSelector: '0x70a08231',
+        params: [{ value: context.user, abiType: 'address' }],
+      },
+      response: { value: balanceWETH, abiType: 'uint256' },
+    },
+    { request: { to: WETH, chainId: 10, fnSelector: '0x313ce567' }, response: { value: '18', abiType: 'uint8' } },
     // DAI
-    { request: { to: DAI, chainId: 10, data: '0x70a08231' }, response: { value: balanceDAI, abiType: 'uint256' } },
-    { request: { to: DAI, chainId: 10, data: '0x313ce567' }, response: { value: '18', abiType: 'uint8' } },
+    {
+      request: {
+        to: DAI,
+        chainId: 10,
+        fnSelector: '0x70a08231',
+        params: [{ value: context.user, abiType: 'address' }],
+      },
+      response: { value: balanceDAI, abiType: 'uint256' },
+    },
+    { request: { to: DAI, chainId: 10, fnSelector: '0x313ce567' }, response: { value: '18', abiType: 'uint8' } },
   ]
 
   describe('when there are some balances', () => {
@@ -62,12 +87,16 @@ describe('Task', () => {
       )
 
       it('emits two swap intents with correct legs and slippage protections', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, calls, prices })) as Swap[]
+        const result = await runTask(taskDir, context, { inputs, calls, prices })
+        expect(result.success).to.be.true
+        expect(result.timestamp).to.be.equal(context.timestamp)
+
+        const intents = result.intents as Swap[]
         expect(intents).to.have.lengthOf(2)
 
         // ---- First swap: ETH -> BTC ($8,500) ----
         const firstSwap = intents[0]
-        expect(firstSwap.type).to.equal('swap')
+        expect(firstSwap.op).to.equal(OpType.Swap)
         expect(firstSwap.settler).to.equal(context.settlers[0].address)
         expect(firstSwap.user).to.equal(context.user)
         expect(firstSwap.sourceChain).to.equal(inputs.chainId)
@@ -84,7 +113,7 @@ describe('Task', () => {
 
         // ---- Second swap: ETH -> DAI ($17,600) ----
         const secondSwap = intents[1]
-        expect(secondSwap.type).to.equal('swap')
+        expect(secondSwap.op).to.equal(OpType.Swap)
         expect(secondSwap.settler).to.equal(context.settlers[0].address)
         expect(secondSwap.user).to.equal(context.user)
         expect(secondSwap.sourceChain).to.equal(inputs.chainId)
@@ -98,6 +127,9 @@ describe('Task', () => {
         expect(secondSwap.tokensOut[0].token).to.equal(DAI)
         expect(secondSwap.tokensOut[0].minAmount).to.equal('17512000000000000000000') // 17,512 DAI (18d)
         expect(secondSwap.tokensOut[0].recipient).to.equal(context.user)
+
+        expect(result.logs).to.have.lengthOf(1)
+        expect(result.logs[0]).to.be.equal('[Info] Rebalance executed')
       })
     })
 
@@ -114,8 +146,12 @@ describe('Task', () => {
       )
 
       it('does not produce any intents', async () => {
-        const intents = await runTask(taskDir, context, { inputs: inputs, calls, prices })
-        expect(intents).to.be.empty
+        const result = await runTask(taskDir, context, { inputs: inputs, calls, prices })
+        expect(result.success).to.be.true
+        expect(result.intents).to.be.empty
+
+        expect(result.logs).to.have.lengthOf(1)
+        expect(result.logs[0]).to.be.equal('[Info] No rebalance needed (target ratios matched)')
       })
     })
   })
@@ -124,8 +160,12 @@ describe('Task', () => {
     const calls = buildErc20Calls('0', '0', '0')
 
     it('does not produce any intents', async () => {
-      const intents = await runTask(taskDir, context, { inputs: inputs, calls: calls, prices: [] })
-      expect(intents).to.be.an('array').that.is.empty
+      const result = await runTask(taskDir, context, { inputs: inputs, calls: calls, prices: [] })
+      expect(result.success).to.be.true
+      expect(result.intents).to.be.empty
+
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.be.equal('[Info] No rebalance needed (total USD is zero)')
     })
   })
 })

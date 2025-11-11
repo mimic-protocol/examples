@@ -1,8 +1,9 @@
+import { OpType } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
-  const taskDir = './'
+  const taskDir = './build'
 
   const context: Context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
@@ -43,7 +44,7 @@ describe('Task', () => {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        data: '0xb16a19de', // `UNDERLYING_ASSET_ADDRESS` fn selector
+        fnSelector: '0xb16a19de', // `UNDERLYING_ASSET_ADDRESS`
       },
       response: {
         value: underlyingToken,
@@ -54,7 +55,13 @@ describe('Task', () => {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        data: '0x70a08231', // `balanceOf` fn selector
+        fnSelector: '0x70a08231', // `balanceOf`
+        params: [
+          {
+            value: context.user!,
+            abiType: 'address',
+          },
+        ],
       },
       response: {
         value: userBalance,
@@ -65,7 +72,7 @@ describe('Task', () => {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        data: '0x313ce567', // `decimals` fn selector
+        fnSelector: '0x313ce567', // `decimals`
       },
       response: {
         value: '6',
@@ -76,7 +83,7 @@ describe('Task', () => {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        data: '0x95d89b41', // `symbol` fn selector
+        fnSelector: '0x95d89b41', // `symbol`
       },
       response: {
         value: 'aOptUSDC',
@@ -88,7 +95,13 @@ describe('Task', () => {
       request: {
         to: underlyingToken,
         chainId: inputs.chainId,
-        data: '0x70a08231', // `balanceOf` fn selector
+        fnSelector: '0x70a08231', // `balanceOf`
+        params: [
+          {
+            value: inputs.recipient,
+            abiType: 'address',
+          },
+        ],
       },
       response: {
         value: recipientBalance,
@@ -99,7 +112,7 @@ describe('Task', () => {
       request: {
         to: underlyingToken,
         chainId: inputs.chainId,
-        data: '0x313ce567', // `decimals` fn selector
+        fnSelector: '0x313ce567', // `decimals`
       },
       response: {
         value: '6',
@@ -110,7 +123,7 @@ describe('Task', () => {
       request: {
         to: underlyingToken,
         chainId: inputs.chainId,
-        data: '0x95d89b41', // `symbol` fn selector
+        fnSelector: '0x95d89b41', // `symbol`
       },
       response: {
         value: 'USDC',
@@ -128,10 +141,14 @@ describe('Task', () => {
       const calls = buildCalls(recipientBalance, userBalance)
 
       it('produces the expected intents', async () => {
-        const intents = (await runTask(taskDir, context, { inputs, calls, prices })) as Swap[]
+        const result = await runTask(taskDir, context, { inputs, calls, prices })
+        expect(result.success).to.be.true
+        expect(result.timestamp).to.be.equal(context.timestamp)
+
+        const intents = result.intents as Swap[]
         expect(intents).to.have.lengthOf(1)
 
-        expect(intents[0].type).to.be.equal('swap')
+        expect(intents[0].op).to.be.equal(OpType.Swap)
         expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
         expect(intents[0].user).to.be.equal(context.user)
         expect(intents[0].sourceChain).to.be.equal(inputs.chainId)
@@ -145,6 +162,10 @@ describe('Task', () => {
         expect(intents[0].tokensOut[0].token).to.be.equal(underlyingToken)
         expect(intents[0].tokensOut[0].minAmount).to.be.equal('10780000') // balance_in_usdc * (1 - slippage) = 11 * 0.98 = 10.78
         expect(intents[0].tokensOut[0].recipient).to.be.equal(inputs.recipient)
+
+        expect(result.logs).to.have.lengthOf(2)
+        expect(result.logs[0]).to.be.equal('[Info] Recipient underlying balance in USD: 9')
+        expect(result.logs[1]).to.be.equal('[Info] Min amount out: 10.78 USDC')
       })
     })
 
@@ -153,8 +174,13 @@ describe('Task', () => {
       const calls = buildCalls(recipientBalance, userBalance)
 
       it('does not produce any intent', async () => {
-        const intents = await runTask(taskDir, context, { inputs, calls, prices })
-        expect(intents).to.be.empty
+        const result = await runTask(taskDir, context, { inputs, calls, prices })
+        expect(result.success).to.be.true
+        expect(result.intents).to.be.empty
+
+        expect(result.logs).to.have.lengthOf(2)
+        expect(result.logs[0]).to.be.equal('[Info] Recipient underlying balance in USD: 9')
+        expect(result.logs[1]).to.be.equal('[Info] Sender balance not enough')
       })
     })
   })
@@ -164,8 +190,13 @@ describe('Task', () => {
     const calls = buildCalls(recipientBalance, '0') // `userBalance` does not matter
 
     it('does not produce any intent', async () => {
-      const intents = await runTask(taskDir, context, { inputs, calls, prices })
-      expect(intents).to.be.empty
+      const result = await runTask(taskDir, context, { inputs, calls, prices })
+      expect(result.success).to.be.true
+      expect(result.intents).to.be.empty
+
+      expect(result.logs).to.have.lengthOf(2)
+      expect(result.logs[0]).to.be.equal('[Info] Recipient underlying balance in USD: 11')
+      expect(result.logs[1]).to.be.equal('[Info] Recipient threshold not met')
     })
   })
 })

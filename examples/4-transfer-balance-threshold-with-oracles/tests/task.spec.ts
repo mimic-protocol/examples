@@ -1,8 +1,9 @@
+import { OpType } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, GetPriceMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
-  const taskDir = './'
+  const taskDir = './build'
 
   const context: Context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
@@ -34,7 +35,13 @@ describe('Task', () => {
       request: {
         to: inputs.token,
         chainId: inputs.chainId,
-        data: '0x70a08231', // `balanceOf` fn selector
+        fnSelector: '0x70a08231', // `balanceOf`,
+        params: [
+          {
+            value: inputs.recipient,
+            abiType: 'address',
+          },
+        ],
       },
       response: {
         value: balance,
@@ -45,7 +52,7 @@ describe('Task', () => {
       request: {
         to: inputs.token,
         chainId: inputs.chainId,
-        data: '0x313ce567', // `decimals` fn selector
+        fnSelector: '0x313ce567', // `decimals`
       },
       response: {
         value: '6',
@@ -59,10 +66,14 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('produces the expected intents', async () => {
-      const intents = (await runTask(taskDir, context, { inputs, calls, prices })) as Transfer[]
+      const result = await runTask(taskDir, context, { inputs, calls, prices })
+      expect(result.success).to.be.true
+      expect(result.timestamp).to.be.equal(context.timestamp)
+
+      const intents = result.intents as Transfer[]
       expect(intents).to.have.lengthOf(1)
 
-      expect(intents[0].type).to.be.equal('transfer')
+      expect(intents[0].op).to.be.equal(OpType.Transfer)
       expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
       expect(intents[0].user).to.be.equal(context.user)
       expect(intents[0].chainId).to.be.equal(inputs.chainId)
@@ -74,6 +85,9 @@ describe('Task', () => {
       expect(intents[0].transfers[0].token).to.be.equal(inputs.token)
       expect(intents[0].transfers[0].amount).to.be.equal(inputs.amount)
       expect(intents[0].transfers[0].recipient).to.be.equal(inputs.recipient)
+
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.be.equal('[Info] Balance in USD: 9')
     })
   })
 
@@ -82,8 +96,12 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('does not produce any intent', async () => {
-      const intents = await runTask(taskDir, context, { inputs, calls, prices })
-      expect(intents).to.be.empty
+      const result = await runTask(taskDir, context, { inputs, calls, prices })
+      expect(result.success).to.be.true
+      expect(result.intents).to.be.empty
+
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.be.equal('[Info] Balance in USD: 11')
     })
   })
 })
