@@ -1,4 +1,4 @@
-import { BigInt, DenominationToken, ERC20Token, log, TokenAmount, USD } from '@mimicprotocol/lib-ts'
+import { DenominationToken, ERC20Token, log, TokenAmount, USD } from '@mimicprotocol/lib-ts'
 
 import { AavePool } from './types/AavePool'
 import { AaveToken } from './types/AaveToken'

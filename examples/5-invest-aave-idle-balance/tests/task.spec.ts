@@ -1,6 +1,13 @@
 import { EvmCallIntent, OpType } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
+import { Context, ContractCallMock, GetPriceMock, runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
+import { Interface } from 'ethers'
+
+import AavePool from '../abis/AavePool.json'
+import ERC20Abi from '../abis/ERC20.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
+const AavePoolInterface = new Interface(AavePool)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -133,7 +140,6 @@ describe('Task', () => {
 
     it('does not produce any intent', async () => {
       const result = await runTask(taskDir, context, { inputs, calls, prices })
-      console.log(result.logs)
       expect(result.success).to.be.true
       expect(result.intents).to.be.empty
 
@@ -159,10 +165,21 @@ describe('Task', () => {
       expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
       expect(intents[0].user).to.be.equal(inputs.smartAccount)
       expect(intents[0].chainId).to.be.equal(inputs.chainId)
-      // Approval
+
+      const expectedApproveData = ERC20Interface.encodeFunctionData('approve', [pool, balance])
       expect(intents[0].calls[0].target).to.be.equal(underlyingToken)
-      // Supply
+      expect(intents[0].calls[0].value).to.be.equal('0')
+      expect(intents[0].calls[0].data).to.be.equal(expectedApproveData)
+
+      const expectedSupplyData = AavePoolInterface.encodeFunctionData('supply(address,uint256,address,uint16)', [
+        underlyingToken,
+        balance,
+        inputs.smartAccount,
+        0,
+      ])
       expect(intents[0].calls[1].target).to.be.equal(pool)
+      expect(intents[0].calls[1].value).to.be.equal('0')
+      expect(intents[0].calls[1].data).to.be.equal(expectedSupplyData)
 
       expect(result.logs).to.have.lengthOf(1)
       expect(result.logs[0]).to.be.equal('[Info] Underlying balance in USD: 11')
