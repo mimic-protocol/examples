@@ -5,7 +5,7 @@ inputs:
   - chainId: uint32
   - tokenIn: address
   - tokenOut: address
-  - slippage: uint32
+  - slippageBps: uint16   # e.g., 50 = 0.50%
   - subgraphId: string
 abis:
   - ERC20: ./abis/ERC20.json

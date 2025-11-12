@@ -1,8 +1,10 @@
-import { ERC20Token, Transfer } from '@mimicprotocol/lib-ts'
+import { BigInt, ERC20Token, Transfer } from '@mimicprotocol/lib-ts'
 
 import { inputs } from './types'
 
 export default function main(): void {
   const token = ERC20Token.fromAddress(inputs.token, inputs.chainId)
-  Transfer.create(token, inputs.amount, inputs.recipient, inputs.maxFee).send()
+  const amount = BigInt.fromStringDecimal(inputs.amount, token.decimals)
+  const maxFee = BigInt.fromStringDecimal(inputs.maxFee, token.decimals)
+  Transfer.create(token, amount, inputs.recipient, maxFee).send()
 }

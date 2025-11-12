@@ -4,9 +4,9 @@ description: Automated task to withdraw from AAVE based on balance threshold in 
 inputs:
   - chainId: uint32
   - aToken: address
-  - slippage: uint32
   - recipient: address
-  - thresholdUSD: uint32
+  - slippageBps: uint16     # e.g., 50 = 0.50%
+  - thresholdUsd: string    # e.g., '30.5' = 30.5 USD
 abis:
   - ERC20: ./abis/ERC20.json
   - AaveToken: ./abis/AaveToken.json

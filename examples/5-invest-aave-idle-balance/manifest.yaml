@@ -4,9 +4,9 @@ description: Automated task to invest in AAVE idle balance above certain thresho
 inputs:
   - chainId: uint32
   - aToken: address
-  - thresholdUSD: uint32
   - smartAccount: address
-  - maxFee: string
+  - thresholdUsd: string    # e.g., '30.5' = 30.5 USD
+  - maxFeeUsd: string       # e.g., '0.05' = 0.05 USD
 abis:
   - ERC20: ./abis/ERC20.json
   - AaveToken: ./abis/AaveToken.json

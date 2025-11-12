@@ -18,8 +18,8 @@ export default function main(): void {
   const underlyingTokenBalanceAmount = underlyingTokenContract.balanceOf(inputs.smartAccount)
   const underlyingTokenBalance = TokenAmount.fromBigInt(underlyingToken, underlyingTokenBalanceAmount)
   const underlyingTokenBalanceInUsd = underlyingTokenBalance.toUsd()
-  const thresholdUsd = USD.fromI32(inputs.thresholdUSD)
-  log.info('Underlying balance in USD: ' + underlyingTokenBalanceInUsd.toString())
+  const thresholdUsd = USD.fromStringDecimal(inputs.thresholdUsd)
+  log.info(`Underlying balance in USD: ${underlyingTokenBalanceInUsd}`)
 
   if (underlyingTokenBalanceInUsd.lt(thresholdUsd)) {
     log.info('Threshold not met')
@@ -33,6 +33,6 @@ export default function main(): void {
   )
 
   // Use mimic credits to pay for the transaction fee
-  const feeWithCredits = TokenAmount.fromStringDecimal(DenominationToken.USD(), inputs.maxFee)
+  const feeWithCredits = TokenAmount.fromStringDecimal(DenominationToken.USD(), inputs.maxFeeUsd)
   calls.addUser(inputs.smartAccount).addMaxFee(feeWithCredits).build().send()
 }

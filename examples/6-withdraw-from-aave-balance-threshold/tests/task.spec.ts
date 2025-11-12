@@ -14,8 +14,8 @@ describe('Task', () => {
   const inputs = {
     chainId: 10, // Optimism
     aToken: '0x625e7708f30ca75bfd92586e17077590c60eb4cd', // Aave Optimism USDC
-    slippage: 2, // 2%
-    thresholdUSD: 10, // 10 USD
+    slippageBps: 200, // 2%
+    thresholdUsd: '10', // 10.2 USD
     recipient: '0xbce3248ede29116e4bd18416dcc2dfca668eeb84',
   }
 

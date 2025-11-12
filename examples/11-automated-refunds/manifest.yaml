@@ -2,8 +2,8 @@ version: 1.0.0
 name: Client refunds
 description: Refunds clients based on past orders
 inputs:
-  - chainId: uint32   # Example: 42161 for Arbitrum
-  - token: string     # Token contract address
-  - amount: string    # Amount in wei (as string)
-  - recipient: string # Recipient address
-  - maxFee: string    # Max fee in wei (as string)
+  - chainId: uint32
+  - token: string
+  - amount: string       # Amount in wei (as string)
+  - recipient: address
+  - maxFee: string       # e.g., '0.01' = 0.01 of the given token

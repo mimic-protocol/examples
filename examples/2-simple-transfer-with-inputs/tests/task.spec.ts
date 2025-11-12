@@ -1,5 +1,5 @@
-import { OpType } from '@mimicprotocol/sdk'
-import { Context, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { fp, OpType } from '@mimicprotocol/sdk'
+import { Context, ContractCallMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
@@ -14,13 +14,20 @@ describe('Task', () => {
   const inputs = {
     chainId: 10, // Optimism
     token: '0x7f5c764cbc14f9669b88837ca1490cca17c31607', // USDC
-    amount: '1000000', // 1 USDC
+    amount: '1.5', // 1.5 USDC
     recipient: '0xbce3248ede29116e4bd18416dcc2dfca668eeb84',
-    maxFee: '100000', // 0.1 USDC
+    maxFee: '0.1',
   }
 
+  const calls: ContractCallMock[] = [
+    {
+      request: { to: inputs.token, chainId: inputs.chainId, fnSelector: '0x313ce567' }, // decimals
+      response: { value: '6', abiType: 'uint8' },
+    },
+  ]
+
   it('produces the expected intents', async () => {
-    const result = await runTask(taskDir, context, { inputs })
+    const result = await runTask(taskDir, context, { inputs, calls })
     expect(result.success).to.be.true
     expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -33,11 +40,11 @@ describe('Task', () => {
     expect(intents[0].chainId).to.be.equal(inputs.chainId)
     expect(intents[0].maxFees).to.have.lengthOf(1)
     expect(intents[0].maxFees[0].token).to.be.equal(inputs.token)
-    expect(intents[0].maxFees[0].amount).to.be.equal(inputs.maxFee)
+    expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, 6).toString())
 
     expect(intents[0].transfers).to.have.lengthOf(1)
     expect(intents[0].transfers[0].token).to.be.equal(inputs.token)
-    expect(intents[0].transfers[0].amount).to.be.equal(inputs.amount)
+    expect(intents[0].transfers[0].amount).to.be.equal(fp(inputs.amount, 6).toString())
     expect(intents[0].transfers[0].recipient).to.be.equal(inputs.recipient)
   })
 })

@@ -22,8 +22,8 @@ describe('Task', () => {
     chainId: 10, // Optimism
     aToken: '0x625e7708f30ca75bfd92586e17077590c60eb4cd', // Aave Optimism USDC
     smartAccount: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a1',
-    thresholdUSD: 10, // 10 USD
-    maxFee: '0.1', // 0.1 USD
+    thresholdUsd: '10.5', // 10 USD
+    maxFeeUsd: '0.1', // 0.1 USD
   }
 
   const underlyingToken = '0x7f5c764cbc14f9669b88837ca1490cca17c31607' // USDC

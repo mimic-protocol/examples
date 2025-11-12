@@ -4,9 +4,9 @@ description: Automated task to execute parameterized transfers based on balance 
 inputs:
   - chainId: uint32
   - token: address
-  - amount: uint256
+  - amount: string          # e.g., '10.2' = 10.2 of the given token
   - recipient: address
-  - maxFee: uint256
-  - thresholdUSD: uint32
+  - maxFee: string          # e.g., '0.01' = 0.01 of the given token
+  - thresholdUsd: string    # e.g., '30.5' = 30.5 USD
 abis:
   - ERC20: ./abis/ERC20.json
