@@ -1,5 +1,5 @@
 {
-  "name": "@mimicprotocol/6-withdraw-from-aave-balance-threshold",
+  "name": "@mimicprotocol/02-simple-transfer-with-inputs",
   "version": "0.0.1",
   "license": "Unlicensed",
   "private": true,

@@ -1,5 +1,5 @@
 {
-  "name": "@mimicprotocol/3-transfer-balance-threshold",
+  "name": "@mimicprotocol/07-withdraw-from-aave-swap-and-transfer",
   "version": "0.0.1",
   "license": "Unlicensed",
   "private": true,

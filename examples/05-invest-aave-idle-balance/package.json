@@ -1,5 +1,5 @@
 {
-  "name": "@mimicprotocol/7-withdraw-from-aave-swap-and-transfer",
+  "name": "@mimicprotocol/05-invest-aave-idle-balance",
   "version": "0.0.1",
   "license": "Unlicensed",
   "private": true,
