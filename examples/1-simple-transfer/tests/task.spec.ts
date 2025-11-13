@@ -11,15 +11,8 @@ describe('Task', () => {
     timestamp: Date.now(),
   }
 
-  const calls: ContractCallMock[] = [
-    {
-      request: { to: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607', chainId: 10, fnSelector: '0x313ce567' }, // decimals
-      response: { value: '6', abiType: 'uint8' },
-    },
-  ]
-
   it('produces the expected intents', async () => {
-    const result = await runTask(taskDir, context, { calls })
+    const result = await runTask(taskDir, context)
     expect(result.success).to.be.true
     expect(result.timestamp).to.be.equal(context.timestamp)
 
