@@ -1,5 +1,5 @@
 import { OpType } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { Context, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Task', () => {
