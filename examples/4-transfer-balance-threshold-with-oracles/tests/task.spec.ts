@@ -17,7 +17,7 @@ describe('Task', () => {
     amount: '1', // 1 USDC
     recipient: '0xbce3248ede29116e4bd18416dcc2dfca668eeb84',
     maxFee: '0.1', // 0.1 USDC
-    thresholdUsd: '10.5', // 10 USD
+    thresholdUsd: '10.5', // 10.5 USD
   }
 
   const prices: GetPriceMock[] = [

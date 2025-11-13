@@ -16,7 +16,7 @@ describe('Task', () => {
     token: '0x7f5c764cbc14f9669b88837ca1490cca17c31607', // USDC
     amount: '1.5', // 1.5 USDC
     recipient: '0xbce3248ede29116e4bd18416dcc2dfca668eeb84',
-    maxFee: '0.1',
+    maxFee: '0.1', // 0.1 USDC
   }
 
   const calls: ContractCallMock[] = [

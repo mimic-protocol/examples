@@ -17,7 +17,7 @@ describe('Task', () => {
     amount: '1', // 1 USDC
     recipient: '0xbce3248ede29116e4bd18416dcc2dfca668eeb84',
     maxFee: '0.1', // 0.1 USDC
-    threshold: '10.2', // 10 USDC
+    threshold: '10.2', // 10.2 USDC
   }
 
   const buildCalls = (balance: string): ContractCallMock[] => [
