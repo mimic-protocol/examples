@@ -4,6 +4,6 @@ description: Automated task to execute parameterized transfers
 inputs:
   - chainId: uint32
   - token: address
-  - amount: uint256
+  - amount: string          # e.g., '15.3' = 15.3 of the given token
   - recipient: address
-  - maxFee: uint256
+  - maxFee: string          # e.g., '0.01' = 0.01 of the given token

@@ -34,7 +34,7 @@ export default function main(): void {
   const targetBps = [inputs.targetBpsA as i32, inputs.targetBpsB as i32, inputs.targetBpsC as i32]
 
   const totalTargetBps = targetBps[0] + targetBps[1] + targetBps[2]
-  if (totalTargetBps != 10_000) throw new Error('Targets BPS must sum to 10000')
+  if (BigInt.fromI32(totalTargetBps) != BPS_DENOMINATOR) throw new Error('Targets BPS must sum to 10000')
 
   const tokensMetadata = [
     ERC20Token.fromAddress(tokenAddresses[0], inputs.chainId),
@@ -84,18 +84,18 @@ export default function main(): void {
     const surplusTokenIndex = surpluses[surplusIndex].index
     const deficitTokenIndex = deficits[deficitIndex].index
 
-    const amountInToken = movedUSD.toTokenAmount(tokensMetadata[surplusTokenIndex])
-    const expectedOutToken = movedUSD.toTokenAmount(tokensMetadata[deficitTokenIndex])
+    const tokenInAmount = movedUSD.toTokenAmount(tokensMetadata[surplusTokenIndex])
+    const expectedTokenOutAmount = movedUSD.toTokenAmount(tokensMetadata[deficitTokenIndex])
 
     const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
-    const minimumOutAmount = expectedOutToken.amount.times(slippageFactor).div(BPS_DENOMINATOR)
+    const minAmountOut = expectedTokenOutAmount.amount.times(slippageFactor).div(BPS_DENOMINATOR)
 
     Swap.create(
       inputs.chainId,
       tokensMetadata[surplusTokenIndex],
-      amountInToken.amount,
+      tokenInAmount.amount,
       tokensMetadata[deficitTokenIndex],
-      minimumOutAmount
+      minAmountOut
     ).send()
 
     surpluses[surplusIndex].amountUSD = surpluses[surplusIndex].amountUSD.minus(movedUSD)

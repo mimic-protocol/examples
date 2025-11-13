@@ -5,6 +5,6 @@ inputs:
   - chainId: uint32
   - tokenIn: address
   - tokenOut: address
-  - amount: string        # "1.5" = 1.5 tokenIn
-  - slippageBps: uint16   # 100 = 1%
+  - amount: string        # e.g., '1.5' = 1.5 tokenIn
+  - slippageBps: uint16   # e.g., 50 = 0.50%
   - recipient: address

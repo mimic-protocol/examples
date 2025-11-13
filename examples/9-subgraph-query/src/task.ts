@@ -18,10 +18,11 @@ class UniswapPoolsData {
 }
 
 const PRICE_PRECISION: u8 = 40
+const BPS_DENOMINATOR = BigInt.fromI32(10_000)
 
 export default function main(): void {
-  if (inputs.slippage > 100) throw new Error('Slippage must be between 0 and 100')
   if (inputs.tokenIn == inputs.tokenOut) throw new Error('Token in and out must be different')
+  if (BigInt.fromI32(inputs.slippageBps as i32) > BPS_DENOMINATOR) throw new Error('Slippage must be between 0 and 100')
 
   const me = environment.getContext().user
   const amountIn = new ERC20(inputs.tokenIn, inputs.chainId).balanceOf(me)
@@ -34,9 +35,8 @@ export default function main(): void {
     .times(price)
     .upscale(tokenOut.decimals)
     .downscale(tokenIn.decimals + PRICE_PRECISION)
-  const slippagePct = BigInt.fromI32(100).minus(BigInt.fromI32(inputs.slippage))
-  const minAmountOut = expectedOut.times(slippagePct).div(BigInt.fromI32(100))
-
+  const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
+  const minAmountOut = expectedOut.times(slippageFactor).div(BPS_DENOMINATOR)
   Swap.create(inputs.chainId, tokenIn, amountIn, tokenOut, minAmountOut).send()
 }
 
@@ -51,8 +51,7 @@ function getTokenPrice(chainId: i32, subgraphId: string, tokenIn: Address, token
     token1 = tokenIn
   }
 
-  const query = `{pools(where: { token0: "${token0.toString()}", token1: "${token1.toString()}" }) {token0Price  token1Price}}`
-
+  const query = `{pools(where: { token0: "${token0}", token1: "${token1}" }) {token0Price  token1Price}}`
   const response = environment.subgraphQuery(chainId, subgraphId, query, null)
   const data = JSON.parse<UniswapPoolsData>(response.data)
 
