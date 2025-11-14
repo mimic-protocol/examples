@@ -13,6 +13,10 @@ export default function main(): void {
     log.info(`Adding transfer for ${token} on chain ${inputs.chainId}`)
   }
 
-  if (builder.transfers.length == 0) log.info(`No tokens found on chain ${inputs.chainId}`)
-  else builder.addMaxFee(TokenAmount.fromStringDecimal(DenominationToken.USD(), inputs.feeAmountUsd)).build().send()
+  if (builder.transfers.length == 0) {
+    log.info(`No tokens found on chain ${inputs.chainId}`)
+    return
+  }
+
+  builder.addMaxFee(TokenAmount.fromStringDecimal(DenominationToken.USD(), inputs.feeAmountUsd)).build().send()
 }
