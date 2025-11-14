@@ -7,7 +7,6 @@ describe('Task', () => {
 
   const chainId = 1
   const USDC = randomEvmAddress()
-  const USDT = randomEvmAddress()
 
   const context = {
     user: randomEvmAddress(),
@@ -27,16 +26,8 @@ describe('Task', () => {
       response: { value: '6', abiType: 'uint8' },
     },
     {
-      request: { chainId, to: USDT, fnSelector: '0x313ce567' },
-      response: { value: '6', abiType: 'uint8' },
-    },
-    {
       request: { chainId, to: USDC, fnSelector: '0x95d89b41' },
       response: { value: 'USDC', abiType: 'string' },
-    },
-    {
-      request: { chainId, to: USDT, fnSelector: '0x95d89b41' },
-      response: { value: 'USDT', abiType: 'string' },
     },
   ]
 
@@ -47,7 +38,7 @@ describe('Task', () => {
           owner: context.user,
           chainIds: [chainId],
           usdMinAmount: '0',
-          tokenFilter: 0,
+          tokenFilter: 1,
           tokens: [],
         },
         response: [
@@ -97,13 +88,13 @@ describe('Task', () => {
           owner: context.user,
           chainIds: [chainId],
           usdMinAmount: '0',
-          tokenFilter: 0,
+          tokenFilter: 1,
           tokens: [],
         },
         response: [
           {
             timestamp: Date.now(),
-            balances: [{ token: { address: USDC, chainId }, balance: '0' }],
+            balances: [],
           },
         ],
       },
