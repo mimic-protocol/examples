@@ -10,14 +10,22 @@ import {
 } from '@mimicprotocol/sdk'
 import { Call, Context, ContractCallMock, Inputs, runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
-import { AbiCoder, concat } from 'ethers'
+import { AbiCoder, Interface } from 'ethers'
+
+import AavePool from '../src/abis/AavePool.json'
+import ERC20Abi from '../src/abis/ERC20.json'
+import SettlerAbi from '../src/abis/Settler.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
+const AavePoolInterface = new Interface(AavePool)
+const SettlerInterface = new Interface(SettlerAbi)
 
 describe('Invest', () => {
   const taskDir = './build/invest'
 
   const chainId = Chains.Optimism
   const aavePool = '0x794a61358d6845594f94dc1db02a252b5b4814ad'
-  const USDC = '0x0b2c639c533813f4aa9d7837caf62653d097ff85'
+  const USDC = randomEvmAddress()
   const decimals = 6
   const amount = fp(10000, decimals) // 10,000 USDC
   const settler = randomEvmAddress()
@@ -25,18 +33,14 @@ describe('Invest', () => {
 
   const encodedAmounts = AbiCoder.defaultAbiCoder().encode(['uint256[]'], [[amount]])
   const encodedToken = AbiCoder.defaultAbiCoder().encode(['address'], [USDC])
+  const encodedEvent = encodeEvent(smartAccount, encodedAmounts, encodedToken)
   const trigger = {
     type: TriggerType.Event,
     data: encodeEventExecution({
       blockHash: randomHex(32),
       index: 0,
-      topics: [
-        randomHex(32), // topic0
-        AbiCoder.defaultAbiCoder().encode(['address'], [smartAccount]), // user
-        randomHex(32), // topic
-        randomHex(32), // op
-      ],
-      eventData: encodeEventData(smartAccount, encodedAmounts, encodedToken),
+      topics: encodedEvent.topics,
+      eventData: encodedEvent.data,
     }),
   }
 
@@ -50,8 +54,8 @@ describe('Invest', () => {
   const inputs = {
     chainId,
     smartAccount,
-    feeToken: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58', // USDT
-    maxFee: '0.5', // 0.5 USDT
+    feeToken: randomEvmAddress(),
+    maxFee: '0.5', // 0.5 feeToken
   }
 
   const calls: ContractCallMock[] = [
@@ -61,7 +65,7 @@ describe('Invest', () => {
     },
     {
       request: { to: inputs.feeToken, chainId, fnSelector: '0x313ce567' }, // `decimals`
-      response: { value: decimals.toString(), abiType: 'uint8' },
+      response: { value: '18', abiType: 'uint8' },
     },
   ]
 
@@ -94,26 +98,24 @@ describe('Invest', () => {
 
           expect(intents[0].maxFees).to.have.lengthOf(1)
           expect(intents[0].maxFees[0].token).to.be.equal(inputs.feeToken)
-          expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, decimals).toString())
+          expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee).toString())
 
           expect(intents[0].calls).to.have.lengthOf(2)
 
-          const firstCall = intents[0].calls[0]
-          expect(firstCall.target).to.be.equal(USDC)
-          expect(firstCall.value).to.be.equal('0')
+          const expectedApproveData = ERC20Interface.encodeFunctionData('approve', [aavePool, amount])
+          expect(intents[0].calls[0].target).to.be.equal(USDC)
+          expect(intents[0].calls[0].value).to.be.equal('0')
+          expect(intents[0].calls[0].data).to.be.equal(expectedApproveData)
 
-          const approveData = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [aavePool, amount])
-          expect(firstCall.data).to.be.equal(concat(['0x095ea7b3', approveData])) // approve
-
-          const secondCall = intents[0].calls[1]
-          expect(secondCall.target).to.be.equal(aavePool)
-          expect(secondCall.value).to.be.equal('0')
-
-          const supplyData = AbiCoder.defaultAbiCoder().encode(
-            ['address', 'uint256', 'address', 'uint16'],
-            [USDC, amount, smartAccount, 0]
-          )
-          expect(secondCall.data).to.be.equal(concat(['0x617ba037', supplyData])) // supply
+          const expectedSupplyData = AavePoolInterface.encodeFunctionData('supply(address,uint256,address,uint16)', [
+            USDC,
+            amount,
+            smartAccount,
+            0,
+          ])
+          expect(intents[0].calls[1].target).to.be.equal(aavePool)
+          expect(intents[0].calls[1].value).to.be.equal('0')
+          expect(intents[0].calls[1].data).to.be.equal(expectedSupplyData)
         })
       })
 
@@ -138,10 +140,12 @@ describe('Invest', () => {
   })
 })
 
-export function encodeEventData(user: string, output: string, data: string): string {
+export function encodeEvent(user: string, output: string, data: string): { topics: string[]; data: string } {
+  const topic = randomHex(32)
+  const op = OpType.Swap
   const intent = [
-    OpType.Swap, // op
-    user, // user
+    op,
+    user,
     randomEvmAddress(), // settler
     randomHex(32), // nonce
     '0', // deadline
@@ -158,13 +162,5 @@ export function encodeEventData(user: string, output: string, data: string): str
     [], // fees
   ]
 
-  return AbiCoder.defaultAbiCoder().encode(
-    [
-      '(uint8,address,address,bytes32,uint256,bytes,(address,uint256)[],(bytes32,bytes)[],bytes,uint256,bytes[])',
-      '(uint256,bytes,uint256[])',
-      'bytes',
-      'bytes',
-    ],
-    [intent, proposal, output, data]
-  )
+  return SettlerInterface.encodeEventLog('IntentExecuted', [user, topic, op, intent, proposal, output, data])
 }

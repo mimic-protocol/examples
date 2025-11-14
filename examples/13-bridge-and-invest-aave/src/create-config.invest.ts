@@ -7,8 +7,6 @@ import { inc } from 'semver'
 
 import SettlerAbi from './abis/Settler.json'
 
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 const SETTLER_IFACE = new Interface(SettlerAbi)
 const INTENT_EXECUTED_TOPIC = SETTLER_IFACE.getEvent('IntentExecuted')!.topicHash
 const BRIDGED_TOPIC = keccak256(toUtf8Bytes('Bridged USDC'))
@@ -21,7 +19,7 @@ const USDT: Record<number, string> = {
   42161: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58', // Arbitrum
 }
 
-async function main() {
+async function main(): Promise<void> {
   if (!process.env.PRIVATE_KEY) throw new Error('Missing PRIVATE_KEY in .env file')
   if (!process.env.INVEST_CID) throw new Error('Missing INVEST_CID in .env file')
   if (!process.env.SMART_ACCOUNT) throw new Error('Missing SMART_ACCOUNT in .env file')
@@ -39,7 +37,7 @@ async function main() {
 
   // Increment config version
   const latestConfig = await client.configs.get({ taskCid: INVEST_CID, sort: Sort.desc, limit: 1 })
-  const version = latestConfig.length ? inc(latestConfig[0].version, 'patch') : '0.0.1'
+  const version = latestConfig.length > 0 ? inc(latestConfig[0].version.split('-')[0], 'patch') : '0.0.1'
   if (!version) throw new Error('Invalid config version')
 
   // Set trigger based on a blockchain event
