@@ -3,5 +3,5 @@ name: Relevant tokens query example
 description: Example of how to use the relevant tokens query
 inputs:
   - chainId: int32
-  - feeAmountUsd: string     # e.g., '1.5' = 1.5 USD
+  - maxFeeUsd: string     # e.g., '1.5' = 1.5 USD
   - recipient: address

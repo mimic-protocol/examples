@@ -1,4 +1,4 @@
-import { OpType } from '@mimicprotocol/sdk'
+import { OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
@@ -6,20 +6,20 @@ describe('Task', () => {
   const taskDir = './build'
 
   const context: Context = {
-    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-    settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId: 10 }],
     timestamp: Date.now(),
   }
 
   const inputs = {
     chainId: 10, // Optimism
-    aToken: '0x625e7708f30ca75bfd92586e17077590c60eb4cd', // Aave Optimism USDC
+    aToken: randomEvmAddress(), // Aave Optimism USDC
     slippageBps: 200, // 2%
     thresholdUsd: '10', // 10 USD
-    recipient: '0xbce3248ede29116e4bd18416dcc2dfca668eeb84',
+    recipient: randomEvmAddress(),
   }
 
-  const underlyingToken = '0x7f5c764cbc14f9669b88837ca1490cca17c31607' // USDC
+  const underlyingToken = randomEvmAddress() // USDC
 
   const prices: GetPriceMock[] = [
     {
@@ -27,14 +27,14 @@ describe('Task', () => {
         token: inputs.aToken,
         chainId: inputs.chainId,
       },
-      response: ['1000000000000000000'], // 1 USD = 1 aOptUSDC
+      response: ['1000000000000000000'], // 1 aOptUSDC = 1 USD
     },
     {
       request: {
         token: underlyingToken,
         chainId: inputs.chainId,
       },
-      response: ['1000000000000000000'], // 1 USD = 1 USDC
+      response: ['1000000000000000000'], // 1 USDC = 1 USD
     },
   ]
 

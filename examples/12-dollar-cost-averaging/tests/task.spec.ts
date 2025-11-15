@@ -1,4 +1,4 @@
-import { Chains, fp, OpType } from '@mimicprotocol/sdk'
+import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
@@ -6,12 +6,12 @@ describe('Task', () => {
   const taskDir = './build'
 
   const chainId = Chains.Base
-  const USDC = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
-  const WETH = '0x4200000000000000000000000000000000000006'
+  const USDC = randomEvmAddress()
+  const WETH = randomEvmAddress()
 
   const context: Context = {
-    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-    settlers: [{ address: '0x609d831c0068844e11ef85a273c7f356212fd6d1', chainId }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId }],
     timestamp: Date.now(),
   }
 

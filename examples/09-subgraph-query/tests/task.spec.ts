@@ -1,4 +1,4 @@
-import { OpType } from '@mimicprotocol/sdk'
+import { OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, runTask, SubgraphQueryMock, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
@@ -6,16 +6,16 @@ describe('Task', () => {
   const taskDir = './build'
 
   const context: Context = {
-    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-    settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 1 }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId: 1 }],
     timestamp: Date.now(),
   }
 
   const inputs = {
     subgraphId: 'subgraph-id',
     chainId: 1,
-    tokenIn: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
-    tokenOut: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
+    tokenIn: '0xa' + randomEvmAddress().slice(3),
+    tokenOut: '0xb' + randomEvmAddress().slice(3),
     slippageBps: 100, // 1%
   }
 
@@ -72,7 +72,7 @@ describe('Task', () => {
   ]
 
   describe('when the balance is not zero', () => {
-    const balance = '9000000000' // 9000 USDC
+    const balance = '9000000000' // 9000 tokenIn
     const calls = buildCalls(balance)
 
     it('produces the expected intents', async () => {

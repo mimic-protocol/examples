@@ -1,4 +1,4 @@
-import { EvmCallIntent, OpType } from '@mimicprotocol/sdk'
+import { EvmCallIntent, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, GetPriceMock, runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
@@ -13,21 +13,21 @@ describe('Task', () => {
   const taskDir = './build'
 
   const context: Context = {
-    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-    settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId: 10 }],
     timestamp: Date.now(),
   }
 
   const inputs = {
     chainId: 10, // Optimism
-    aToken: '0x625e7708f30ca75bfd92586e17077590c60eb4cd', // Aave Optimism USDC
-    smartAccount: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a1',
+    aToken: randomEvmAddress(), // Aave Optimism USDC
+    smartAccount: randomEvmAddress(),
     thresholdUsd: '10.5', // 10.5 USD
     maxFeeUsd: '0.1', // 0.1 USD
   }
 
-  const underlyingToken = '0x7f5c764cbc14f9669b88837ca1490cca17c31607' // USDC
-  const pool = '0x794a61358d6845594f94dc1db02a252b5b4814ad' // Aave Pool
+  const underlyingToken = randomEvmAddress() // USDC
+  const aavePool = randomEvmAddress()
 
   const prices: GetPriceMock[] = [
     {
@@ -35,14 +35,14 @@ describe('Task', () => {
         token: inputs.aToken,
         chainId: inputs.chainId,
       },
-      response: ['1000000000000000000'], // 1 USD = 1 aOptUSDC
+      response: ['1000000000000000000'], // 1 aOptUSDC = 1 USD
     },
     {
       request: {
         token: underlyingToken,
         chainId: inputs.chainId,
       },
-      response: ['1000000000000000000'], // 1 USD = 1 USDC
+      response: ['1000000000000000000'], // 1 USDC = 1 USD
     },
   ]
 
@@ -66,7 +66,7 @@ describe('Task', () => {
         fnSelector: '0x7535d246', // `POOL`
       },
       response: {
-        value: pool,
+        value: aavePool,
         abiType: 'address',
       },
     },
@@ -166,7 +166,7 @@ describe('Task', () => {
       expect(intents[0].user).to.be.equal(inputs.smartAccount)
       expect(intents[0].chainId).to.be.equal(inputs.chainId)
 
-      const expectedApproveData = ERC20Interface.encodeFunctionData('approve', [pool, balance])
+      const expectedApproveData = ERC20Interface.encodeFunctionData('approve', [aavePool, balance])
       expect(intents[0].calls[0].target).to.be.equal(underlyingToken)
       expect(intents[0].calls[0].value).to.be.equal('0')
       expect(intents[0].calls[0].data).to.be.equal(expectedApproveData)
@@ -177,7 +177,7 @@ describe('Task', () => {
         inputs.smartAccount,
         0,
       ])
-      expect(intents[0].calls[1].target).to.be.equal(pool)
+      expect(intents[0].calls[1].target).to.be.equal(aavePool)
       expect(intents[0].calls[1].value).to.be.equal('0')
       expect(intents[0].calls[1].data).to.be.equal(expectedSupplyData)
 

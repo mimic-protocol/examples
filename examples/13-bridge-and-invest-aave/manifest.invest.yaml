@@ -5,7 +5,7 @@ inputs:
   - chainId: uint32
   - smartAccount: address
   - feeToken: address
-  - maxFee: string
+  - maxFee: string          # e.g., '0.01' = 0.01 of the given token
 abis:
   - AavePool: ./src/abis/AavePool.json
   - ERC20: ./src/abis/ERC20.json
