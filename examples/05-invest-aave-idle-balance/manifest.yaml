@@ -1,5 +1,5 @@
 version: 1.0.0
-name: Invest in a AAVE idle balance
+name: Invest in AAVE idle balance
 description: Automated task to invest in AAVE idle balance above certain threshold in USD
 inputs:
   - chainId: uint32
