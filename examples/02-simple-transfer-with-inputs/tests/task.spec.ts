@@ -21,7 +21,7 @@ describe('Task', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: { to: inputs.token, chainId: inputs.chainId, fnSelector: '0x313ce567' }, // decimals
+      request: { to: inputs.token, chainId: inputs.chainId, fnSelector: '0x313ce567' }, // `decimals`
       response: { value: '6', abiType: 'uint8' },
     },
   ]

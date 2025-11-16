@@ -16,8 +16,8 @@ import AavePool from '../src/abis/AavePool.json'
 import ERC20Abi from '../src/abis/ERC20.json'
 import SettlerAbi from '../src/abis/Settler.json'
 
-const ERC20Interface = new Interface(ERC20Abi)
 const AavePoolInterface = new Interface(AavePool)
+const ERC20Interface = new Interface(ERC20Abi)
 const SettlerInterface = new Interface(SettlerAbi)
 
 describe('Invest', () => {
@@ -60,11 +60,11 @@ describe('Invest', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: { to: USDC, chainId, fnSelector: '0x313ce567' }, // `decimals`
+      request: { to: USDC, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: decimals.toString(), abiType: 'uint8' },
     },
     {
-      request: { to: inputs.feeToken, chainId, fnSelector: '0x313ce567' }, // `decimals`
+      request: { to: inputs.feeToken, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '18', abiType: 'uint8' },
     },
   ]

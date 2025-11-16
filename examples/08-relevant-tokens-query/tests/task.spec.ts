@@ -1,6 +1,11 @@
 import { NATIVE_TOKEN_ADDRESS, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { ContractCallMock, GetRelevantTokensMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
+import { Interface } from 'ethers'
+
+import ERC20Abi from '../abis/ERC20.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -22,11 +27,11 @@ describe('Task', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: { chainId, to: USDC, fnSelector: '0x313ce567' },
+      request: { chainId, to: USDC, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '6', abiType: 'uint8' },
     },
     {
-      request: { chainId, to: USDC, fnSelector: '0x95d89b41' },
+      request: { chainId, to: USDC, fnSelector: ERC20Interface.getFunction('symbol')!.selector },
       response: { value: 'USDC', abiType: 'string' },
     },
   ]
