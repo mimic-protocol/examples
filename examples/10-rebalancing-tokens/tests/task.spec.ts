@@ -1,4 +1,4 @@
-import { OpType } from '@mimicprotocol/sdk'
+import { OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { ContractCallMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
@@ -6,14 +6,14 @@ describe('Task', () => {
   const taskDir = './build'
 
   const context = {
-    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-    settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId: 10 }],
     timestamp: Date.now(),
   }
 
-  const WBTC = '0x1111111111111111111111111111111111111111' // 8 decimals
-  const WETH = '0x2222222222222222222222222222222222222222' // 18 decimals
-  const DAI = '0x3333333333333333333333333333333333333333' // 18 decimals
+  const WBTC = randomEvmAddress() // 8 decimals
+  const WETH = randomEvmAddress() // 18 decimals
+  const DAI = randomEvmAddress() // 18 decimals
 
   const inputs = {
     chainId: 10,

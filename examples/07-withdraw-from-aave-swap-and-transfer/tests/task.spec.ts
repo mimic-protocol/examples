@@ -1,4 +1,4 @@
-import { Chains, OpType } from '@mimicprotocol/sdk'
+import { Chains, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import {
   Call,
   Context,
@@ -23,15 +23,15 @@ describe('Task', () => {
   }
 
   const context: Context = {
-    user: '0xae7168deb525862f4fee37d987a971b385b96952',
-    settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId: 10 }],
     timestamp: Date.now(),
   }
 
   const inputs = {
     chainId,
-    smartAccount: '0x863df6bfa4469f3ead0be8f9f2aae51c91a907b4',
-    usdFeeAmount: '1', // 1 USD in USDT
+    smartAccount: randomEvmAddress(),
+    maxFeeUsdt: '1', // 1 USDT
   }
 
   const calls: ContractCallMock[] = [

@@ -1,4 +1,4 @@
-import { fp, OpType } from '@mimicprotocol/sdk'
+import { fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
@@ -6,18 +6,18 @@ describe('Task', () => {
   const taskDir = './build'
 
   const context: Context = {
-    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-    settlers: [{ address: '0xdcf1d9d12a0488dfb70a8696f44d6d3bc303963d', chainId: 10 }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId: 10 }],
     timestamp: Date.now(),
   }
 
   const inputs = {
     chainId: 10, // Optimism
-    token: '0x7f5c764cbc14f9669b88837ca1490cca17c31607', // USDC
-    amount: '1', // 1 USDC
-    recipient: '0xbce3248ede29116e4bd18416dcc2dfca668eeb84',
-    maxFee: '0.1', // 0.1 USDC
-    threshold: '10.2', // 10.2 USDC
+    token: randomEvmAddress(),
+    amount: '1', // 1 token
+    recipient: randomEvmAddress(),
+    maxFee: '0.1', // 0.1 tokens
+    threshold: '10.2', // 10.2 tokens
   }
 
   const buildCalls = (balance: string): ContractCallMock[] => [
@@ -52,7 +52,7 @@ describe('Task', () => {
   ]
 
   describe('when the balance is below the threshold', () => {
-    const balance = '9000000' // 9 USDC
+    const balance = '9000000' // 9 tokens
     const calls = buildCalls(balance)
 
     it('produces the expected intents', async () => {
@@ -79,7 +79,7 @@ describe('Task', () => {
   })
 
   describe('when the balance is above the threshold', () => {
-    const balance = '11000000' // 11 USDC
+    const balance = '11000000' // 11 tokens
     const calls = buildCalls(balance)
 
     it('does not produce any intent', async () => {

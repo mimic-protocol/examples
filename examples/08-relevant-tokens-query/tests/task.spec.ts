@@ -16,7 +16,7 @@ describe('Task', () => {
 
   const inputs = {
     chainId,
-    feeAmountUsd: '0.1',
+    maxFeeUsd: '0.1',
     recipient: randomEvmAddress(),
   }
 

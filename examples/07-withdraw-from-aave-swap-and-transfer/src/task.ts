@@ -47,13 +47,13 @@ export default function main(): void {
   const usdcUser = findTokenAmount(userTokens, USDC)
   const aUsdcUser = findTokenAmount(userTokens, aUSDC)
 
-  const feeUsdt = TokenAmount.fromStringDecimal(USDT, inputs.usdFeeAmount)
+  const maxFeeUsdt = TokenAmount.fromStringDecimal(USDT, inputs.maxFeeUsdt)
 
   if (aUsdcSmartAccount && aUsdcSmartAccount.amount > BigInt.zero()) {
     // Claim aUSDC to user EOA using USDC in smart account
     aaveV3Pool
       .withdraw(USDC.address, aUsdcSmartAccount.amount, context.user)
-      .addMaxFee(feeUsdt)
+      .addMaxFee(maxFeeUsdt)
       .addUser(inputs.smartAccount)
       .build()
       .send()
@@ -73,7 +73,7 @@ export default function main(): void {
     // Transfer aUSDC from user EOA to smart account
     TransferBuilder.forChain(chainId)
       .addTransfer(new TransferData(aUSDC.address, aUsdcUser.amount, inputs.smartAccount))
-      .addMaxFee(feeUsdt)
+      .addMaxFee(maxFeeUsdt)
       .build()
       .send()
   }

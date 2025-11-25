@@ -1,4 +1,4 @@
-import { Chains, fp, OpType } from '@mimicprotocol/sdk'
+import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
@@ -8,17 +8,17 @@ describe('Task', () => {
   const chainId = Chains.Arbitrum
 
   const context: Context = {
-    user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
-    settlers: [{ address: '0x609d831c0068844e11ef85a273c7f356212fd6d1', chainId }],
+    user: randomEvmAddress(),
+    settlers: [{ address: randomEvmAddress(), chainId }],
     timestamp: Date.now(),
   }
 
   const inputs = {
     chainId,
-    token: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC
-    amount: '100', // 100 USDC
-    maxFee: '0.3', // 0.3 USDC
-    recipient: '0xe35e9842fceaca96570b734083f4a58e8f7c5f2a',
+    token: randomEvmAddress(),
+    amount: '100', // 100 tokens
+    maxFee: '0.3', // 0.3 tokens
+    recipient: randomEvmAddress(),
   }
 
   const calls: ContractCallMock[] = [

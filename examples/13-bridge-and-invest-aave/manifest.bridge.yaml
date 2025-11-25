@@ -4,8 +4,8 @@ description: Bridge USDC between Arbitrum, Base and Optimism, and emit a custom 
 inputs:
   - sourceChain: uint32
   - destinationChain: uint32
-  - smartAccount: address # Important: The smart account should exist in both chains
-  - amount: string
-  - minAmountOut: string
+  - smartAccount: address   # Important: The smart account should exist in both chains
+  - amount: string          # e.g., '10.5' = 10.5 USDC
+  - minAmountOut: string    # e.g., '10' = 10 USDC
   - feeToken: address
-  - maxFee: string
+  - maxFee: string          # e.g., '0.01' = 0.01 of the given token
