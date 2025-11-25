@@ -1,6 +1,11 @@
 import { fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
+import { Interface } from 'ethers'
+
+import ERC20Abi from '../abis/ERC20.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -25,29 +30,18 @@ describe('Task', () => {
       request: {
         to: inputs.token,
         chainId: inputs.chainId,
-        fnSelector: '0x70a08231', // `balanceOf`
-        params: [
-          {
-            value: inputs.recipient,
-            abiType: 'address',
-          },
-        ],
+        fnSelector: ERC20Interface.getFunction('balanceOf')!.selector,
+        params: [{ value: inputs.recipient, abiType: 'address' }],
       },
-      response: {
-        value: balance,
-        abiType: 'uint256',
-      },
+      response: { value: balance, abiType: 'uint256' },
     },
     {
       request: {
         to: inputs.token,
         chainId: inputs.chainId,
-        fnSelector: '0x313ce567', // `decimals`
+        fnSelector: ERC20Interface.getFunction('decimals')!.selector,
       },
-      response: {
-        value: '6',
-        abiType: 'uint8',
-      },
+      response: { value: '6', abiType: 'uint8' },
     },
   ]
 

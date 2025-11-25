@@ -1,13 +1,20 @@
-import { OpType, randomEvmAddress } from '@mimicprotocol/sdk'
+import { Chains, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { ContractCallMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
+import { Interface } from 'ethers'
+
+import ERC20Abi from '../abis/ERC20.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Task', () => {
   const taskDir = './build'
 
+  const chainId = Chains.Optimism
+
   const context = {
     user: randomEvmAddress(),
-    settlers: [{ address: randomEvmAddress(), chainId: 10 }],
+    settlers: [{ address: randomEvmAddress(), chainId }],
     timestamp: Date.now(),
   }
 
@@ -16,7 +23,7 @@ describe('Task', () => {
   const DAI = randomEvmAddress() // 18 decimals
 
   const inputs = {
-    chainId: 10,
+    chainId,
     tokenA: WBTC,
     tokenB: WETH,
     tokenC: DAI,
@@ -31,43 +38,52 @@ describe('Task', () => {
     {
       request: {
         to: WBTC,
-        chainId: 10,
-        fnSelector: '0x70a08231', // balanceOf
+        chainId,
+        fnSelector: ERC20Interface.getFunction('balanceOf')!.selector,
         params: [{ value: context.user, abiType: 'address' }],
       },
       response: { value: balanceWBTC, abiType: 'uint256' },
     },
-    { request: { to: WBTC, chainId: 10, fnSelector: '0x313ce567' }, response: { value: '8', abiType: 'uint8' } }, // decimals
+    {
+      request: { to: WBTC, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
+      response: { value: '8', abiType: 'uint8' },
+    },
     // WETH
     {
       request: {
         to: WETH,
-        chainId: 10,
-        fnSelector: '0x70a08231',
+        chainId,
+        fnSelector: ERC20Interface.getFunction('balanceOf')!.selector,
         params: [{ value: context.user, abiType: 'address' }],
       },
       response: { value: balanceWETH, abiType: 'uint256' },
     },
-    { request: { to: WETH, chainId: 10, fnSelector: '0x313ce567' }, response: { value: '18', abiType: 'uint8' } },
+    {
+      request: { to: WETH, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
+      response: { value: '18', abiType: 'uint8' },
+    },
     // DAI
     {
       request: {
         to: DAI,
-        chainId: 10,
-        fnSelector: '0x70a08231',
+        chainId,
+        fnSelector: ERC20Interface.getFunction('balanceOf')!.selector,
         params: [{ value: context.user, abiType: 'address' }],
       },
       response: { value: balanceDAI, abiType: 'uint256' },
     },
-    { request: { to: DAI, chainId: 10, fnSelector: '0x313ce567' }, response: { value: '18', abiType: 'uint8' } },
+    {
+      request: { to: DAI, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
+      response: { value: '18', abiType: 'uint8' },
+    },
   ]
 
   describe('when there are some balances', () => {
     // Prices: BTC=$60k, ETH=$3k, DAI=$1 — all with 1e18 USD precision
     const prices = [
-      { request: { token: WBTC, chainId: 10 }, response: ['60000000000000000000000'] }, // 60000 * 1e18
-      { request: { token: WETH, chainId: 10 }, response: ['3000000000000000000000'] }, // 3000  * 1e18
-      { request: { token: DAI, chainId: 10 }, response: ['1000000000000000000'] }, // 1     * 1e18
+      { request: { token: WBTC, chainId }, response: ['60000000000000000000000'] }, // 60000 * 1e18
+      { request: { token: WETH, chainId }, response: ['3000000000000000000000'] }, // 3000  * 1e18
+      { request: { token: DAI, chainId }, response: ['1000000000000000000'] }, // 1     * 1e18
     ]
 
     describe('when rebalancing is needed (ETH surplus → BTC & DAI deficits)', () => {

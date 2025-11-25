@@ -10,6 +10,13 @@ import {
   Transfer,
 } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
+import { Interface } from 'ethers'
+
+import AavePool from '../abis/AavePool.json'
+import ERC20Abi from '../abis/ERC20.json'
+
+const AavePoolInterface = new Interface(AavePool)
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -36,7 +43,7 @@ describe('Task', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: { to: tokens.USDT, chainId, fnSelector: '0x313ce567' }, // `decimals`
+      request: { to: tokens.USDT, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '6', abiType: 'uint8' },
     },
   ]
@@ -125,8 +132,9 @@ describe('Task', () => {
 
   describe('when all relevant tokens are not present', () => {
     describe('when there is only aUSDC in the smart account', () => {
+      const amount = '1000000'
       const relevantTokens = buildRelevantTokens({
-        aUsdcSmartAccountBalance: '1000000',
+        aUsdcSmartAccountBalance: amount,
         usdcUserBalance: '0',
         aUsdcUserBalance: '0',
       })
@@ -141,6 +149,15 @@ describe('Task', () => {
 
         expect(intents[0].op).to.equal(OpType.EvmCall)
         expect(intents[0].user).to.equal(inputs.smartAccount)
+
+        const expectedData = AavePoolInterface.encodeFunctionData('withdraw(address,uint256,address)', [
+          tokens.USDC,
+          amount,
+          context.user,
+        ])
+        expect(intents[0].calls[0].target).to.be.equal('0x794a61358d6845594f94dc1db02a252b5b4814ad')
+        expect(intents[0].calls[0].value).to.be.equal('0')
+        expect(intents[0].calls[0].data).to.be.equal(expectedData)
       })
     })
 

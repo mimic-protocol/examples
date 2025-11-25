@@ -1,7 +1,11 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, Inputs, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
-import { AbiCoder, keccak256, toUtf8Bytes } from 'ethers'
+import { AbiCoder, Interface, keccak256, toUtf8Bytes } from 'ethers'
+
+import ERC20Abi from '../src/abis/ERC20.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Bridge', () => {
   const taskDir = './build/bridge'
@@ -34,15 +38,23 @@ describe('Bridge', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: { to: sourceUsdc, chainId: sourceChain, fnSelector: '0x313ce567' }, // `decimals`
+      request: { to: sourceUsdc, chainId: sourceChain, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: decimals.toString(), abiType: 'uint8' },
     },
     {
-      request: { to: destinationUsdc, chainId: destinationChain, fnSelector: '0x313ce567' }, // `decimals`
+      request: {
+        to: destinationUsdc,
+        chainId: destinationChain,
+        fnSelector: ERC20Interface.getFunction('decimals')!.selector,
+      },
       response: { value: decimals.toString(), abiType: 'uint8' },
     },
     {
-      request: { to: inputs.feeToken, chainId: destinationChain, fnSelector: '0x313ce567' }, // `decimals`
+      request: {
+        to: inputs.feeToken,
+        chainId: destinationChain,
+        fnSelector: ERC20Interface.getFunction('decimals')!.selector,
+      },
       response: { value: decimals.toString(), abiType: 'uint8' },
     },
   ]

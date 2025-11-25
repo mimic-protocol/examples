@@ -4,10 +4,12 @@ import { expect } from 'chai'
 import { Interface } from 'ethers'
 
 import AavePool from '../abis/AavePool.json'
+import AaveToken from '../abis/AaveToken.json'
 import ERC20Abi from '../abis/ERC20.json'
 
-const ERC20Interface = new Interface(ERC20Abi)
 const AavePoolInterface = new Interface(AavePool)
+const AaveTokenInterface = new Interface(AaveToken)
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -31,17 +33,11 @@ describe('Task', () => {
 
   const prices: GetPriceMock[] = [
     {
-      request: {
-        token: inputs.aToken,
-        chainId: inputs.chainId,
-      },
+      request: { token: inputs.aToken, chainId: inputs.chainId },
       response: ['1000000000000000000'], // 1 aOptUSDC = 1 USD
     },
     {
-      request: {
-        token: underlyingToken,
-        chainId: inputs.chainId,
-      },
+      request: { token: underlyingToken, chainId: inputs.chainId },
       response: ['1000000000000000000'], // 1 USDC = 1 USD
     },
   ]
@@ -52,85 +48,59 @@ describe('Task', () => {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        fnSelector: '0xb16a19de', // `UNDERLYING_ASSET_ADDRESS`
+        fnSelector: AaveTokenInterface.getFunction('UNDERLYING_ASSET_ADDRESS')!.selector,
       },
-      response: {
-        value: underlyingToken,
-        abiType: 'address',
-      },
+      response: { value: underlyingToken, abiType: 'address' },
     },
     {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        fnSelector: '0x7535d246', // `POOL`
+        fnSelector: AaveTokenInterface.getFunction('POOL')!.selector,
       },
-      response: {
-        value: aavePool,
-        abiType: 'address',
-      },
+      response: { value: aavePool, abiType: 'address' },
     },
     {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        fnSelector: '0x313ce567', // `decimals`
+        fnSelector: ERC20Interface.getFunction('decimals')!.selector,
       },
-      response: {
-        value: '6',
-        abiType: 'uint8',
-      },
+      response: { value: '6', abiType: 'uint8' },
     },
     {
       request: {
         to: inputs.aToken,
         chainId: inputs.chainId,
-        fnSelector: '0x95d89b41', // `symbol`
+        fnSelector: ERC20Interface.getFunction('symbol')!.selector,
       },
-      response: {
-        value: 'aOptUSDC',
-        abiType: 'string',
-      },
+      response: { value: 'aOptUSDC', abiType: 'string' },
     },
     // USDC
     {
       request: {
         to: underlyingToken,
         chainId: inputs.chainId,
-        fnSelector: '0x70a08231', // `balanceOf`
-        params: [
-          {
-            value: inputs.smartAccount,
-            abiType: 'address',
-          },
-        ],
+        fnSelector: ERC20Interface.getFunction('balanceOf')!.selector,
+        params: [{ value: inputs.smartAccount, abiType: 'address' }],
       },
-      response: {
-        value: balance,
-        abiType: 'uint256',
-      },
+      response: { value: balance, abiType: 'uint256' },
     },
     {
       request: {
         to: underlyingToken,
         chainId: inputs.chainId,
-        fnSelector: '0x313ce567', // `decimals`
+        fnSelector: ERC20Interface.getFunction('decimals')!.selector,
       },
-      response: {
-        value: '6',
-        abiType: 'uint8',
-      },
+      response: { value: '6', abiType: 'uint8' },
     },
     {
       request: {
         to: underlyingToken,
         chainId: inputs.chainId,
-        fnSelector: '0x95d89b41', // `symbol`
+        fnSelector: ERC20Interface.getFunction('symbol')!.selector,
       },
-      response: {
-        value: 'USDC',
-        abiType: 'string',
-      },
+      response: { value: 'USDC', abiType: 'string' },
     },
   ]
 
