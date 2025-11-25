@@ -13,8 +13,10 @@ import { expect } from 'chai'
 import { Interface } from 'ethers'
 
 import AavePool from '../abis/AavePool.json'
+import ERC20Abi from '../abis/ERC20.json'
 
 const AavePoolInterface = new Interface(AavePool)
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -41,7 +43,7 @@ describe('Task', () => {
 
   const calls: ContractCallMock[] = [
     {
-      request: { to: tokens.USDT, chainId, fnSelector: '0x313ce567' }, // `decimals`
+      request: { to: tokens.USDT, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '6', abiType: 'uint8' },
     },
   ]

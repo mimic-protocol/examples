@@ -1,6 +1,11 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
+import { Interface } from 'ethers'
+
+import ERC20Abi from '../abis/ERC20.json'
+
+const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Task', () => {
   const taskDir = './build'
@@ -38,20 +43,20 @@ describe('Task', () => {
   const calls: ContractCallMock[] = [
     // USDC
     {
-      request: { to: USDC, chainId, fnSelector: '0x313ce567' }, // `decimals`
+      request: { to: USDC, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '6', abiType: 'uint8' },
     },
     {
-      request: { to: USDC, chainId, fnSelector: '0x95d89b41' }, // `symbol`
+      request: { to: USDC, chainId, fnSelector: ERC20Interface.getFunction('symbol')!.selector },
       response: { value: 'USDC', abiType: 'string' },
     },
     // WETH
     {
-      request: { to: WETH, chainId, fnSelector: '0x313ce567' }, // `decimals`
+      request: { to: WETH, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '18', abiType: 'uint8' },
     },
     {
-      request: { to: WETH, chainId, fnSelector: '0x95d89b41' }, // `symbol`
+      request: { to: WETH, chainId, fnSelector: ERC20Interface.getFunction('symbol')!.selector },
       response: { value: 'WETH', abiType: 'string' },
     },
   ]
