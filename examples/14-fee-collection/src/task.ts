@@ -2,10 +2,8 @@ import {
   Arbitrum,
   Base,
   BigInt,
-  BlockchainToken,
   ChainId,
   environment,
-  ERC20Token,
   ListType,
   log,
   Optimism,
@@ -23,8 +21,7 @@ export default function main(): void {
   const context = environment.getContext()
 
   // Find tokens with user's balance > 0
-  const tokenList = buildTokenList(inputs.tokensCsv, chainId)
-  const amountsIn = environment.getRelevantTokens(context.user, [chainId], USD.zero(), tokenList, ListType.AllowList)
+  const amountsIn = environment.getRelevantTokens(context.user, [chainId], USD.zero(), [], ListType.DenyList)
 
   if (amountsIn.length == 0) {
     log.info(`No tokens found on chain ${chainId}`)
@@ -48,19 +45,6 @@ export default function main(): void {
 
     log.info(`Adding swap of ${amountIn} to ${minAmountOut} on chain ${chainId}`)
   }
-}
-
-function buildTokenList(tokensCsv: string, chainId: u32): BlockchainToken[] {
-  const list = new Array<BlockchainToken>()
-
-  const tokenAddresses = tokensCsv.split(',')
-  for (let i = 0; i < tokenAddresses.length; i++) {
-    const tokenAddress = tokenAddresses[i]
-    const erc20 = ERC20Token.fromString(tokenAddress, chainId)
-    list.push(changetype<BlockchainToken>(erc20))
-  }
-
-  return list
 }
 
 function getUsdc(chainId: i32): Token {

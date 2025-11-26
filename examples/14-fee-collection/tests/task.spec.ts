@@ -23,7 +23,6 @@ describe('Task', () => {
 
   const inputs = {
     chainId,
-    tokensCsv: `${WETH},${WBTC}`,
     slippageBps: 50, // 0.5%
     recipient: randomEvmAddress(),
   }
@@ -71,11 +70,8 @@ describe('Task', () => {
           owner: context.user!,
           chainIds: [chainId],
           usdMinAmount: '0',
-          tokenFilter: 0,
-          tokens: [
-            { address: WETH, chainId },
-            { address: WBTC, chainId },
-          ],
+          tokenFilter: 1,
+          tokens: [],
         },
         response: [
           {
@@ -142,11 +138,8 @@ describe('Task', () => {
           owner: context.user!,
           chainIds: [chainId],
           usdMinAmount: '0',
-          tokenFilter: 0,
-          tokens: [
-            { address: WETH, chainId },
-            { address: WBTC, chainId },
-          ],
+          tokenFilter: 1,
+          tokens: [],
         },
         response: [{ timestamp: Date.now(), balances: [] }],
       },
