@@ -8,7 +8,7 @@ import {
   randomSig,
   TriggerType,
 } from '@mimicprotocol/sdk'
-import { Call, Context, ContractCallMock, Inputs, runTask } from '@mimicprotocol/test-ts'
+import { Call, Context, EvmCallQueryMock, Inputs, runTask } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, Interface } from 'ethers'
 
@@ -58,7 +58,7 @@ describe('Invest', () => {
     maxFee: '0.5', // 0.5 feeToken
   }
 
-  const calls: ContractCallMock[] = [
+  const calls: EvmCallQueryMock[] = [
     {
       request: { to: USDC, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: decimals.toString(), abiType: 'uint8' },

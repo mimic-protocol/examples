@@ -4,7 +4,15 @@ import { inputs } from './types'
 
 export default function main(): void {
   const context = environment.getContext()
-  const tokens = environment.getRelevantTokens(context.user, [inputs.chainId], USD.zero(), [], ListType.DenyList)
+  const tokensResponse = environment.relevantTokensQuery(
+    context.user,
+    [inputs.chainId],
+    USD.zero(),
+    [],
+    ListType.DenyList
+  )
+  if (tokensResponse.isError) throw new Error(tokensResponse.error)
+  const tokens = tokensResponse.value
   const builder = TransferBuilder.forChain(inputs.chainId)
 
   for (let i = 0; i < tokens.length; i++) {
@@ -13,7 +21,7 @@ export default function main(): void {
     log.info(`Adding transfer for ${token} on chain ${inputs.chainId}`)
   }
 
-  if (builder.transfers.length == 0) {
+  if (builder.getTransfers().length === 0) {
     log.info(`No tokens found on chain ${inputs.chainId}`)
     return
   }

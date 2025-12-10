@@ -21,7 +21,9 @@ export default function main(): void {
   const context = environment.getContext()
 
   // Find tokens with user's balance > 0
-  const amountsIn = environment.getRelevantTokens(context.user, [chainId], USD.zero(), [], ListType.DenyList)
+  const amountsInResponse = environment.relevantTokensQuery(context.user, [chainId], USD.zero(), [], ListType.DenyList)
+  if (amountsInResponse.isError) throw new Error(amountsInResponse.error)
+  const amountsIn = amountsInResponse.value
 
   if (amountsIn.length == 0) {
     log.info(`No tokens found on chain ${chainId}`)

@@ -1,5 +1,5 @@
 import { fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, GetPriceMock, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runTask, TokenPriceQueryMock, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -25,14 +25,14 @@ describe('Task', () => {
     thresholdUsd: '10.5', // 10.5 USD
   }
 
-  const prices: GetPriceMock[] = [
+  const prices: TokenPriceQueryMock[] = [
     {
       request: { token: inputs.token, chainId: inputs.chainId },
       response: ['1000000000000000000'], // 1 token = 1 USD
     },
   ]
 
-  const buildCalls = (balance: string): ContractCallMock[] => [
+  const buildCalls = (balance: string): EvmCallQueryMock[] => [
     {
       request: {
         to: inputs.token,

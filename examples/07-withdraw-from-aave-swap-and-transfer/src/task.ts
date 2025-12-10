@@ -28,21 +28,26 @@ export default function main(): void {
 
   const context = environment.getContext()
 
-  const userTokens = environment.getRelevantTokens(
+  const userTokensResponse = environment.relevantTokensQuery(
     context.user,
     [chainId],
     USD.zero(),
     [USDC, aUSDC],
     ListType.AllowList
   )
+  if (userTokensResponse.isError) throw new Error(userTokensResponse.error)
+  const userTokens = userTokensResponse.value
 
-  const smartAccountTokens = environment.getRelevantTokens(
+  const smartAccountTokensResponse = environment.relevantTokensQuery(
     inputs.smartAccount,
     [chainId],
     USD.zero(),
     [aUSDC],
     ListType.AllowList
   )
+  if (smartAccountTokensResponse.isError) throw new Error(smartAccountTokensResponse.error)
+  const smartAccountTokens = smartAccountTokensResponse.value
+
   const aUsdcSmartAccount = findTokenAmount(smartAccountTokens, aUSDC)
   const usdcUser = findTokenAmount(userTokens, USDC)
   const aUsdcUser = findTokenAmount(userTokens, aUSDC)

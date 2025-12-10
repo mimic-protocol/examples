@@ -5,7 +5,9 @@ import { inputs } from './types'
 
 export default function main(): void {
   const tokenContract = new ERC20(inputs.token, inputs.chainId)
-  const balance = tokenContract.balanceOf(inputs.recipient)
+  const balanceResponse = tokenContract.balanceOf(inputs.recipient)
+  if (balanceResponse.isError) throw new Error(balanceResponse.error)
+  const balance = balanceResponse.value
 
   const token = ERC20Token.fromAddress(inputs.token, inputs.chainId)
   const threshold = BigInt.fromStringDecimal(inputs.threshold, token.decimals)

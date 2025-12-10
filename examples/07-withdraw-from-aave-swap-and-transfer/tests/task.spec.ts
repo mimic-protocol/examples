@@ -2,11 +2,11 @@ import { Chains, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import {
   Call,
   Context,
-  ContractCallMock,
-  GetPriceMock,
-  GetRelevantTokensMock,
+  EvmCallQueryMock,
+  RelevantTokensQueryMock,
   runTask,
   Swap,
+  TokenPriceQueryMock,
   Transfer,
 } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
@@ -41,14 +41,14 @@ describe('Task', () => {
     maxFeeUsdt: '1', // 1 USDT
   }
 
-  const calls: ContractCallMock[] = [
+  const calls: EvmCallQueryMock[] = [
     {
       request: { to: tokens.USDT, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '6', abiType: 'uint8' },
     },
   ]
 
-  const prices: GetPriceMock[] = [
+  const prices: TokenPriceQueryMock[] = [
     {
       request: { token: tokens.aUSDC, chainId },
       response: ['1000000'],
@@ -71,7 +71,7 @@ describe('Task', () => {
     aUsdcSmartAccountBalance: string
     usdcUserBalance: string
     aUsdcUserBalance: string
-  }): GetRelevantTokensMock[] => [
+  }): RelevantTokensQueryMock[] => [
     {
       request: {
         owner: inputs.smartAccount,

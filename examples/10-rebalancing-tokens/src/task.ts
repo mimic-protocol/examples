@@ -17,7 +17,9 @@ function shareByBps(amountUSD: USD, bps: i32): USD {
 function getTokenAmount(chainId: u32, tokenAddress: Address): TokenAmount {
   const me = environment.getContext().user
   const contract = new ERC20(tokenAddress, chainId)
-  const balance = contract.balanceOf(me)
+  const balanceResponse = contract.balanceOf(me)
+  if (balanceResponse.isError) throw new Error(balanceResponse.error)
+  const balance = balanceResponse.value
   const token = ERC20Token.fromAddress(tokenAddress, chainId)
   return TokenAmount.fromBigInt(token, balance)
 }

@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -26,7 +26,7 @@ describe('Task', () => {
     recipient: randomEvmAddress(),
   }
 
-  const calls: ContractCallMock[] = [
+  const calls: EvmCallQueryMock[] = [
     {
       request: { to: inputs.token, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '6', abiType: 'uint8' },

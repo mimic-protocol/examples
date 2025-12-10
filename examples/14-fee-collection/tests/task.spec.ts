@@ -1,5 +1,12 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, GetPriceMock, GetRelevantTokensMock, runTask, Swap } from '@mimicprotocol/test-ts'
+import {
+  Context,
+  EvmCallQueryMock,
+  RelevantTokensQueryMock,
+  runTask,
+  Swap,
+  TokenPriceQueryMock,
+} from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -27,13 +34,13 @@ describe('Task', () => {
     recipient: randomEvmAddress(),
   }
 
-  const prices: GetPriceMock[] = [
+  const prices: TokenPriceQueryMock[] = [
     { request: { token: USDC, chainId }, response: [fp(1).toString()] }, // 1 USDC = 1 USD
     { request: { token: WETH, chainId }, response: [fp(50).toString()] }, // 1 WETH = 50 USD
     { request: { token: WBTC, chainId }, response: [fp(100).toString()] }, // 1 WBTC = 100 USD
   ]
 
-  const calls: ContractCallMock[] = [
+  const calls: EvmCallQueryMock[] = [
     // USDC
     {
       request: { chainId, to: USDC, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
@@ -64,7 +71,7 @@ describe('Task', () => {
   ]
 
   describe('when the user has some balance for the requested tokens', () => {
-    const relevantTokens: GetRelevantTokensMock[] = [
+    const relevantTokens: RelevantTokensQueryMock[] = [
       {
         request: {
           owner: context.user!,
@@ -132,7 +139,7 @@ describe('Task', () => {
   })
 
   describe('when the user does not have balance for the requested tokens', () => {
-    const relevantTokens: GetRelevantTokensMock[] = [
+    const relevantTokens: RelevantTokensQueryMock[] = [
       {
         request: {
           owner: context.user!,

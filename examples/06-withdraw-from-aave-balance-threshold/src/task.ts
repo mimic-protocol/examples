@@ -12,12 +12,17 @@ export default function main(): void {
   const aToken = ERC20Token.fromAddress(inputs.aToken, inputs.chainId)
   const aTokenContract = new AaveToken(aToken.address, aToken.chainId)
 
-  const underlyingTokenAddress = aTokenContract.UNDERLYING_ASSET_ADDRESS()
+  const underlyingTokenAddressResponse = aTokenContract.UNDERLYING_ASSET_ADDRESS()
+  if (underlyingTokenAddressResponse.isError) throw new Error(underlyingTokenAddressResponse.error)
+  const underlyingTokenAddress = underlyingTokenAddressResponse.value
   const underlyingToken = ERC20Token.fromAddress(underlyingTokenAddress, aToken.chainId)
 
   const underlyingTokenContract = new ERC20(underlyingToken.address, underlyingToken.chainId)
-  const underlyingTokenBalanceAmount = underlyingTokenContract.balanceOf(inputs.recipient)
+  const underlyingTokenBalanceAmountResponse = underlyingTokenContract.balanceOf(inputs.recipient)
+  if (underlyingTokenBalanceAmountResponse.isError) throw new Error(underlyingTokenBalanceAmountResponse.error)
+  const underlyingTokenBalanceAmount = underlyingTokenBalanceAmountResponse.value
   const underlyingTokenBalance = TokenAmount.fromBigInt(underlyingToken, underlyingTokenBalanceAmount)
+
   const underlyingTokenBalanceInUsd = underlyingTokenBalance.toUsd()
   const thresholdUsd = USD.fromStringDecimal(inputs.thresholdUsd)
   log.info(`Recipient underlying balance in USD: ${underlyingTokenBalanceInUsd}`)
@@ -28,7 +33,9 @@ export default function main(): void {
     const aTokenDepositAmount = depositAmountUsd.toTokenAmount(aToken)
 
     const me = environment.getContext().user
-    const aTokenBalanceAmount = aTokenContract.balanceOf(me)
+    const aTokenBalanceAmountResponse = aTokenContract.balanceOf(me)
+    if (aTokenBalanceAmountResponse.isError) throw new Error(aTokenBalanceAmountResponse.error)
+    const aTokenBalanceAmount = aTokenBalanceAmountResponse.value
     const aTokenBalance = TokenAmount.fromBigInt(aToken, aTokenBalanceAmount)
 
     if (aTokenBalance.lt(aTokenDepositAmount)) log.info('Sender balance not enough')
