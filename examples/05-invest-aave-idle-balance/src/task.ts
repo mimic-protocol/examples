@@ -9,20 +9,20 @@ export default function main(): void {
   const aToken = ERC20Token.fromAddress(inputs.aToken, inputs.chainId)
   const aTokenContract = new AaveToken(aToken.address, aToken.chainId)
 
-  const underlyingTokenAddressResponse = aTokenContract.UNDERLYING_ASSET_ADDRESS()
-  if (underlyingTokenAddressResponse.isError) throw new Error(underlyingTokenAddressResponse.error)
-  const underlyingTokenAddress = underlyingTokenAddressResponse.value
+  const underlyingTokenAddressResult = aTokenContract.UNDERLYING_ASSET_ADDRESS()
+  if (underlyingTokenAddressResult.isError) throw new Error(underlyingTokenAddressResult.error)
+  const underlyingTokenAddress = underlyingTokenAddressResult.value
   const underlyingToken = ERC20Token.fromAddress(underlyingTokenAddress, aToken.chainId)
 
-  const aavePoolAddressResponse = aTokenContract.POOL()
-  if (aavePoolAddressResponse.isError) throw new Error(aavePoolAddressResponse.error)
-  const aavePoolAddress = aavePoolAddressResponse.value
+  const aavePoolAddressResult = aTokenContract.POOL()
+  if (aavePoolAddressResult.isError) throw new Error(aavePoolAddressResult.error)
+  const aavePoolAddress = aavePoolAddressResult.value
   const aavePool = new AavePool(aavePoolAddress, inputs.chainId)
 
   const underlyingTokenContract = new ERC20(underlyingToken.address, underlyingToken.chainId)
-  const underlyingTokenBalanceAmountResponse = underlyingTokenContract.balanceOf(inputs.smartAccount)
-  if (underlyingTokenBalanceAmountResponse.isError) throw new Error(underlyingTokenBalanceAmountResponse.error)
-  const underlyingTokenBalanceAmount = underlyingTokenBalanceAmountResponse.value
+  const underlyingTokenBalanceAmountResult = underlyingTokenContract.balanceOf(inputs.smartAccount)
+  if (underlyingTokenBalanceAmountResult.isError) throw new Error(underlyingTokenBalanceAmountResult.error)
+  const underlyingTokenBalanceAmount = underlyingTokenBalanceAmountResult.value
 
   const underlyingTokenBalance = TokenAmount.fromBigInt(underlyingToken, underlyingTokenBalanceAmount)
   const underlyingTokenBalanceInUsdResult = underlyingTokenBalance.toUsd()

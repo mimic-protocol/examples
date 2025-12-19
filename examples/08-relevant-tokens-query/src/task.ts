@@ -4,15 +4,15 @@ import { inputs } from './types'
 
 export default function main(): void {
   const context = environment.getContext()
-  const tokensResponse = environment.relevantTokensQuery(
+  const tokensResult = environment.relevantTokensQuery(
     context.user,
     [inputs.chainId],
     USD.zero(),
     [],
     ListType.DenyList
   )
-  if (tokensResponse.isError) throw new Error(tokensResponse.error)
-  const tokens = tokensResponse.value
+  if (tokensResult.isError) throw new Error(tokensResult.error)
+  const tokens = tokensResult.value
   const builder = TransferBuilder.forChain(inputs.chainId)
 
   for (let i = 0; i < tokens.length; i++) {
