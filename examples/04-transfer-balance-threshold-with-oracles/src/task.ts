@@ -10,7 +10,9 @@ export default function main(): void {
   const balance = balanceResponse.value
 
   const token = ERC20Token.fromAddress(inputs.token, inputs.chainId)
-  const balanceInUsd = TokenAmount.fromBigInt(token, balance).toUsd()
+  const balanceInUsdResult = TokenAmount.fromBigInt(token, balance).toUsd()
+  if (balanceInUsdResult.isError) throw new Error(balanceInUsdResult.error)
+  const balanceInUsd = balanceInUsdResult.value
   const thresholdUsd = USD.fromStringDecimal(inputs.thresholdUsd)
   log.info(`Balance in USD: ${balanceInUsd}`)
 

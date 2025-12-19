@@ -35,7 +35,9 @@ export default function main(): void {
 
   for (let i = 0; i < amountsIn.length; i++) {
     const amountIn = amountsIn[i]
-    const amountOut = amountIn.toTokenAmount(USDC)
+    const amountOutResult = amountIn.toTokenAmount(USDC)
+    if (amountOutResult.isError) throw new Error(amountOutResult.error)
+    const amountOut = amountOutResult.value
     const minAmountOut = amountOut.times(slippageFactor).div(BPS_DENOMINATOR)
 
     // Note that the recipient will receive the USDC

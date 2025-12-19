@@ -50,7 +50,11 @@ export default function main(): void {
     getTokenAmount(inputs.chainId, tokenAddresses[2]),
   ]
 
-  const currentBalancesUsd = [tokenAmounts[0].toUsd(), tokenAmounts[1].toUsd(), tokenAmounts[2].toUsd()]
+  const currentBalancesUsd = [
+    tokenAmounts[0].toUsd().value,
+    tokenAmounts[1].toUsd().value,
+    tokenAmounts[2].toUsd().value,
+  ]
   const totalPortfolioUSD = currentBalancesUsd[0].plus(currentBalancesUsd[1]).plus(currentBalancesUsd[2])
   if (totalPortfolioUSD.le(USD.zero())) {
     log.info('No rebalance needed (total USD is zero)')
@@ -86,8 +90,12 @@ export default function main(): void {
     const surplusTokenIndex = surpluses[surplusIndex].index
     const deficitTokenIndex = deficits[deficitIndex].index
 
-    const tokenInAmount = movedUSD.toTokenAmount(tokensMetadata[surplusTokenIndex])
-    const expectedTokenOutAmount = movedUSD.toTokenAmount(tokensMetadata[deficitTokenIndex])
+    const tokenInAmountResult = movedUSD.toTokenAmount(tokensMetadata[surplusTokenIndex])
+    if (tokenInAmountResult.isError) throw new Error(tokenInAmountResult.error)
+    const tokenInAmount = tokenInAmountResult.value
+    const expectedTokenOutAmounResult = movedUSD.toTokenAmount(tokensMetadata[deficitTokenIndex])
+    if (expectedTokenOutAmounResult.isError) throw new Error(expectedTokenOutAmounResult.error)
+    const expectedTokenOutAmount = expectedTokenOutAmounResult.value
 
     const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
     const minAmountOut = expectedTokenOutAmount.amount.times(slippageFactor).div(BPS_DENOMINATOR)

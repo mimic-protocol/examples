@@ -25,7 +25,9 @@ export default function main(): void {
   const underlyingTokenBalanceAmount = underlyingTokenBalanceAmountResponse.value
 
   const underlyingTokenBalance = TokenAmount.fromBigInt(underlyingToken, underlyingTokenBalanceAmount)
-  const underlyingTokenBalanceInUsd = underlyingTokenBalance.toUsd()
+  const underlyingTokenBalanceInUsdResult = underlyingTokenBalance.toUsd()
+  if (underlyingTokenBalanceInUsdResult.isError) throw new Error(underlyingTokenBalanceInUsdResult.error)
+  const underlyingTokenBalanceInUsd = underlyingTokenBalanceInUsdResult.value
   const thresholdUsd = USD.fromStringDecimal(inputs.thresholdUsd)
   log.info(`Underlying balance in USD: ${underlyingTokenBalanceInUsd}`)
 

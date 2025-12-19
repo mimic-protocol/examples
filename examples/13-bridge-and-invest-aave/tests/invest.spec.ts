@@ -37,6 +37,8 @@ describe('Invest', () => {
   const trigger = {
     type: TriggerType.Event,
     data: encodeEventExecution({
+      address: settler,
+      chainId,
       blockHash: randomHex(32),
       index: 0,
       topics: encodedEvent.topics,

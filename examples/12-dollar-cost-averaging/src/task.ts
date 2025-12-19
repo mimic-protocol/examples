@@ -1,8 +1,6 @@
-import { BigInt, ERC20Token, log, SwapBuilder, TokenAmount } from '@mimicprotocol/lib-ts'
+import { ERC20Token, log, SwapBuilder, TokenAmount } from '@mimicprotocol/lib-ts'
 
 import { inputs } from './types'
-
-const BPS_DENOMINATOR = BigInt.fromI32(10_000)
 
 export default function main(): void {
   // Log input parameters
@@ -16,11 +14,12 @@ export default function main(): void {
 
   // Create amount from decimal string and estimate amount out
   const amountIn = TokenAmount.fromStringDecimal(tokenIn, inputs.amount)
-  const expectedOut = amountIn.toTokenAmount(tokenOut)
+  const expectedOutResult = amountIn.toTokenAmount(tokenOut)
+  if (expectedOutResult.isError) throw new Error(expectedOutResult.error)
+  const expectedOut = expectedOutResult.value
 
   // Apply slippage to calculate the expected minimum amount out
-  const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
-  const minAmountOut = expectedOut.times(slippageFactor).div(BPS_DENOMINATOR)
+  const minAmountOut = expectedOut.applySlippageBps(inputs.slippageBps as i32)
   log.info(`Calculated minOut: ${minAmountOut} (equivalent=${expectedOut}, slippageBps=${inputs.slippageBps})`)
 
   // Create and execute swap
