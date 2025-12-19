@@ -25,7 +25,9 @@ export default function main(): void {
   if (BigInt.fromI32(inputs.slippageBps as i32) > BPS_DENOMINATOR) throw new Error('Slippage must be between 0 and 100')
 
   const me = environment.getContext().user
-  const amountIn = new ERC20(inputs.tokenIn, inputs.chainId).balanceOf(me)
+  const amountInResult = new ERC20(inputs.tokenIn, inputs.chainId).balanceOf(me)
+  if (amountInResult.isError) throw new Error(amountInResult.error)
+  const amountIn = amountInResult.value
   if (amountIn.isZero()) throw new Error('No amount in to swap')
 
   const price = getTokenPrice(inputs.chainId, inputs.subgraphId, inputs.tokenIn, inputs.tokenOut)
@@ -52,8 +54,9 @@ function getTokenPrice(chainId: i32, subgraphId: string, tokenIn: Address, token
   }
 
   const query = `{pools(where: { token0: "${token0}", token1: "${token1}" }) {token0Price  token1Price}}`
-  const response = environment.subgraphQuery(chainId, subgraphId, query, null)
-  const data = JSON.parse<UniswapPoolsData>(response.data)
+  const queryResult = environment.subgraphQuery(chainId, subgraphId, query, null)
+  if (queryResult.isError) throw new Error(queryResult.error)
+  const data = JSON.parse<UniswapPoolsData>(queryResult.value.data)
 
   if (tokenIn == token0 && tokenOut === token1) {
     return BigInt.fromStringDecimal(data.pools[0].token1Price, PRICE_PRECISION)

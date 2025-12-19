@@ -1,5 +1,5 @@
 import { Chains, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { ContractCallMock, runTask, Swap } from '@mimicprotocol/test-ts'
+import { EvmCallQueryMock, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -33,7 +33,7 @@ describe('Task', () => {
     slippageBps: 50, // 0.50%
   }
 
-  const buildErc20Calls = (balanceWBTC: string, balanceWETH: string, balanceDAI: string): ContractCallMock[] => [
+  const buildErc20Calls = (balanceWBTC: string, balanceWETH: string, balanceDAI: string): EvmCallQueryMock[] => [
     // WBTC
     {
       request: {

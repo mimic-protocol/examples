@@ -21,7 +21,9 @@ export default function main(): void {
   const context = environment.getContext()
 
   // Find tokens with user's balance > 0
-  const amountsIn = environment.getRelevantTokens(context.user, [chainId], USD.zero(), [], ListType.DenyList)
+  const amountsInResult = environment.relevantTokensQuery(context.user, [chainId], USD.zero(), [], ListType.DenyList)
+  if (amountsInResult.isError) throw new Error(amountsInResult.error)
+  const amountsIn = amountsInResult.value
 
   if (amountsIn.length == 0) {
     log.info(`No tokens found on chain ${chainId}`)
@@ -33,7 +35,9 @@ export default function main(): void {
 
   for (let i = 0; i < amountsIn.length; i++) {
     const amountIn = amountsIn[i]
-    const amountOut = amountIn.toTokenAmount(USDC)
+    const amountOutResult = amountIn.toTokenAmount(USDC)
+    if (amountOutResult.isError) throw new Error(amountOutResult.error)
+    const amountOut = amountOutResult.value
     const minAmountOut = amountOut.times(slippageFactor).div(BPS_DENOMINATOR)
 
     // Note that the recipient will receive the USDC

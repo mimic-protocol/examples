@@ -1,5 +1,5 @@
 import { fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -25,7 +25,7 @@ describe('Task', () => {
     threshold: '10.2', // 10.2 tokens
   }
 
-  const buildCalls = (balance: string): ContractCallMock[] => [
+  const buildCalls = (balance: string): EvmCallQueryMock[] => [
     {
       request: {
         to: inputs.token,

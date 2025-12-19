@@ -9,15 +9,25 @@ export default function main(): void {
   const aToken = ERC20Token.fromAddress(inputs.aToken, inputs.chainId)
   const aTokenContract = new AaveToken(aToken.address, aToken.chainId)
 
-  const underlyingTokenAddress = aTokenContract.UNDERLYING_ASSET_ADDRESS()
+  const underlyingTokenAddressResult = aTokenContract.UNDERLYING_ASSET_ADDRESS()
+  if (underlyingTokenAddressResult.isError) throw new Error(underlyingTokenAddressResult.error)
+  const underlyingTokenAddress = underlyingTokenAddressResult.value
   const underlyingToken = ERC20Token.fromAddress(underlyingTokenAddress, aToken.chainId)
 
-  const aavePool = new AavePool(aTokenContract.POOL(), inputs.chainId)
+  const aavePoolAddressResult = aTokenContract.POOL()
+  if (aavePoolAddressResult.isError) throw new Error(aavePoolAddressResult.error)
+  const aavePoolAddress = aavePoolAddressResult.value
+  const aavePool = new AavePool(aavePoolAddress, inputs.chainId)
 
   const underlyingTokenContract = new ERC20(underlyingToken.address, underlyingToken.chainId)
-  const underlyingTokenBalanceAmount = underlyingTokenContract.balanceOf(inputs.smartAccount)
+  const underlyingTokenBalanceAmountResult = underlyingTokenContract.balanceOf(inputs.smartAccount)
+  if (underlyingTokenBalanceAmountResult.isError) throw new Error(underlyingTokenBalanceAmountResult.error)
+  const underlyingTokenBalanceAmount = underlyingTokenBalanceAmountResult.value
+
   const underlyingTokenBalance = TokenAmount.fromBigInt(underlyingToken, underlyingTokenBalanceAmount)
-  const underlyingTokenBalanceInUsd = underlyingTokenBalance.toUsd()
+  const underlyingTokenBalanceInUsdResult = underlyingTokenBalance.toUsd()
+  if (underlyingTokenBalanceInUsdResult.isError) throw new Error(underlyingTokenBalanceInUsdResult.error)
+  const underlyingTokenBalanceInUsd = underlyingTokenBalanceInUsdResult.value
   const thresholdUsd = USD.fromStringDecimal(inputs.thresholdUsd)
   log.info(`Underlying balance in USD: ${underlyingTokenBalanceInUsd}`)
 

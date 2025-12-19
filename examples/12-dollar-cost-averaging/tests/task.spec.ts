@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, GetPriceMock, runTask, Swap } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runTask, Swap, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -29,7 +29,7 @@ describe('Task', () => {
     recipient: context.user!,
   }
 
-  const prices: GetPriceMock[] = [
+  const prices: TokenPriceQueryMock[] = [
     {
       request: { token: USDC, chainId },
       response: [fp(1).toString()], // 1 USDC = 1 USD
@@ -40,7 +40,7 @@ describe('Task', () => {
     },
   ]
 
-  const calls: ContractCallMock[] = [
+  const calls: EvmCallQueryMock[] = [
     // USDC
     {
       request: { to: USDC, chainId, fnSelector: ERC20Interface.getFunction('decimals')!.selector },

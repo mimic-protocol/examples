@@ -1,5 +1,5 @@
 import { NATIVE_TOKEN_ADDRESS, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { ContractCallMock, GetRelevantTokensMock, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { EvmCallQueryMock, RelevantTokensQueryMock, runTask, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -25,7 +25,7 @@ describe('Task', () => {
     recipient: randomEvmAddress(),
   }
 
-  const calls: ContractCallMock[] = [
+  const calls: EvmCallQueryMock[] = [
     {
       request: { chainId, to: USDC, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: '6', abiType: 'uint8' },
@@ -37,7 +37,7 @@ describe('Task', () => {
   ]
 
   describe('when the user has some balance for the requested tokens', () => {
-    const relevantTokens: GetRelevantTokensMock[] = [
+    const relevantTokens: RelevantTokensQueryMock[] = [
       {
         request: {
           owner: context.user,
@@ -87,7 +87,7 @@ describe('Task', () => {
   })
 
   describe('when the user does not have balance for the requested tokens', () => {
-    const relevantTokens: GetRelevantTokensMock[] = [
+    const relevantTokens: RelevantTokensQueryMock[] = [
       {
         request: {
           owner: context.user,

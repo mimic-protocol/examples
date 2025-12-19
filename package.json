@@ -7,7 +7,9 @@
   "scripts": {
     "lint": "yarn workspaces run lint",
     "build": "yarn workspaces run build",
-    "test": "yarn workspaces run test"
+    "test": "yarn workspaces run test",
+    "codegen": "yarn workspaces run codegen",
+    "compile": "yarn workspaces run compile"
   },
   "workspaces": {
     "packages": [

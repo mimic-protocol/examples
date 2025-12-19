@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, ContractCallMock, Inputs, runTask, Swap } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, Inputs, runTask, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, Interface, keccak256, toUtf8Bytes } from 'ethers'
 
@@ -36,7 +36,7 @@ describe('Bridge', () => {
     maxFee: '0.5', // 0.5 feeToken
   }
 
-  const calls: ContractCallMock[] = [
+  const calls: EvmCallQueryMock[] = [
     {
       request: { to: sourceUsdc, chainId: sourceChain, fnSelector: ERC20Interface.getFunction('decimals')!.selector },
       response: { value: decimals.toString(), abiType: 'uint8' },
