@@ -17,9 +17,7 @@ function shareByBps(amountUSD: USD, bps: i32): USD {
 function getTokenAmount(chainId: u32, tokenAddress: Address): TokenAmount {
   const me = environment.getContext().user
   const contract = new ERC20(tokenAddress, chainId)
-  const balanceResult = contract.balanceOf(me)
-  if (balanceResult.isError) throw new Error(balanceResult.error)
-  const balance = balanceResult.value
+  const balance = contract.balanceOf(me).unwrap()
   const token = ERC20Token.fromAddress(tokenAddress, chainId)
   return TokenAmount.fromBigInt(token, balance)
 }
@@ -51,9 +49,9 @@ export default function main(): void {
   ]
 
   const currentBalancesUsd = [
-    tokenAmounts[0].toUsd().value,
-    tokenAmounts[1].toUsd().value,
-    tokenAmounts[2].toUsd().value,
+    tokenAmounts[0].toUsd().unwrap(),
+    tokenAmounts[1].toUsd().unwrap(),
+    tokenAmounts[2].toUsd().unwrap(),
   ]
   const totalPortfolioUSD = currentBalancesUsd[0].plus(currentBalancesUsd[1]).plus(currentBalancesUsd[2])
   if (totalPortfolioUSD.le(USD.zero())) {
@@ -90,12 +88,8 @@ export default function main(): void {
     const surplusTokenIndex = surpluses[surplusIndex].index
     const deficitTokenIndex = deficits[deficitIndex].index
 
-    const tokenInAmountResult = movedUSD.toTokenAmount(tokensMetadata[surplusTokenIndex])
-    if (tokenInAmountResult.isError) throw new Error(tokenInAmountResult.error)
-    const tokenInAmount = tokenInAmountResult.value
-    const expectedTokenOutAmounResult = movedUSD.toTokenAmount(tokensMetadata[deficitTokenIndex])
-    if (expectedTokenOutAmounResult.isError) throw new Error(expectedTokenOutAmounResult.error)
-    const expectedTokenOutAmount = expectedTokenOutAmounResult.value
+    const tokenInAmount = movedUSD.toTokenAmount(tokensMetadata[surplusTokenIndex]).unwrap()
+    const expectedTokenOutAmount = movedUSD.toTokenAmount(tokensMetadata[deficitTokenIndex]).unwrap()
 
     const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
     const minAmountOut = expectedTokenOutAmount.amount.times(slippageFactor).div(BPS_DENOMINATOR)
