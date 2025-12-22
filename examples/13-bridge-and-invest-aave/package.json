@@ -14,7 +14,7 @@
     "compile:invest": "mimic compile -t src/invest.ts -m manifest.invest.yaml -o ./build/invest",
     "deploy:bridge": "yarn codegen:bridge && yarn compile:bridge && mimic deploy --input ./build/bridge --output ./build/bridge --skip-compile",
     "deploy:invest": "yarn codegen:invest && yarn compile:invest && mimic deploy --input ./build/invest --output ./build/invest --skip-compile",
-    "test": "yarn build && mimic test --skipCompile",
+    "test": "yarn build && mimic test --skip-compile",
     "create-config:invest": "tsc -p tsconfig.create-config.json && tsx src/create-config.invest.ts",
     "lint": "eslint ."
   },

@@ -14,10 +14,7 @@ export default function main(): void {
 
   // Create amount from decimal string and estimate amount out
   const amountIn = TokenAmount.fromStringDecimal(tokenIn, inputs.amount)
-  const expectedOutResult = amountIn.toTokenAmount(tokenOut)
-  if (expectedOutResult.isError) throw new Error(expectedOutResult.error)
-  const expectedOut = expectedOutResult.value
-
+  const expectedOut = amountIn.toTokenAmount(tokenOut).unwrap()
   // Apply slippage to calculate the expected minimum amount out
   const minAmountOut = expectedOut.applySlippageBps(inputs.slippageBps as i32)
   log.info(`Calculated minOut: ${minAmountOut} (equivalent=${expectedOut}, slippageBps=${inputs.slippageBps})`)
