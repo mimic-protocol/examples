@@ -5,18 +5,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "yarn codegen && yarn compile",
-    "codegen": "yarn codegen:bridge && yarn codegen:invest",
-    "codegen:bridge": "yarn mimic codegen -m manifest.bridge.yaml -o ./src/types/bridge",
-    "codegen:invest": "yarn mimic codegen -m manifest.invest.yaml -o ./src/types/invest",
-    "compile": "yarn compile:bridge && yarn compile:invest",
-    "compile:bridge": "mimic compile -t src/bridge.ts -m manifest.bridge.yaml -o ./build/bridge",
-    "compile:invest": "mimic compile -t src/invest.ts -m manifest.invest.yaml -o ./build/invest",
-    "deploy:bridge": "yarn codegen:bridge && yarn compile:bridge && mimic deploy --input ./build/bridge --output ./build/bridge --skip-compile",
-    "deploy:invest": "yarn codegen:invest && yarn compile:invest && mimic deploy --input ./build/invest --output ./build/invest --skip-compile",
-    "test": "yarn build && mimic test --skipCompile",
-    "create-config:invest": "tsc -p tsconfig.create-config.json && tsx src/create-config.invest.ts",
-    "lint": "eslint ."
+    "build": "mimic build",
+    "codegen": "mimic codegen",
+    "compile": "mimic compile",
+    "test": "mimic test",
+    "lint": "eslint .",
+    "create-config:invest": "tsc -p tsconfig.create-config.json && tsx src/create-config.invest.ts"
   },
   "dependencies": {
     "dotenv": "^17.0.0",

@@ -1,0 +1,10 @@
+tasks:
+  - name: bridge
+    manifest: manifest.bridge.yaml
+    entry: src/bridge.ts
+    types: src/types/bridge
+
+  - name: invest
+    manifest: manifest.invest.yaml
+    entry: src/invest.ts
+    types: src/types/invest
