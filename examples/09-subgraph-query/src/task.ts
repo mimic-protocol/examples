@@ -1,4 +1,4 @@
-import { Address, BigInt, environment, ERC20Token, Swap } from '@mimicprotocol/lib-ts'
+import { Address, BigInt, environment, ERC20Token, Swap, TokenAmount } from '@mimicprotocol/lib-ts'
 import { JSON } from 'json-as/assembly'
 
 import { ERC20 } from './types/ERC20'
@@ -18,11 +18,9 @@ class UniswapPoolsData {
 }
 
 const PRICE_PRECISION: u8 = 40
-const BPS_DENOMINATOR = BigInt.fromI32(10_000)
 
 export default function main(): void {
   if (inputs.tokenIn == inputs.tokenOut) throw new Error('Token in and out must be different')
-  if (BigInt.fromI32(inputs.slippageBps as i32) > BPS_DENOMINATOR) throw new Error('Slippage must be between 0 and 100')
 
   const me = environment.getContext().user
   const amountIn = new ERC20(inputs.tokenIn, inputs.chainId).balanceOf(me).unwrap()
@@ -35,9 +33,9 @@ export default function main(): void {
     .times(price)
     .upscale(tokenOut.decimals)
     .downscale(tokenIn.decimals + PRICE_PRECISION)
-  const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
-  const minAmountOut = expectedOut.times(slippageFactor).div(BPS_DENOMINATOR)
-  Swap.create(inputs.chainId, tokenIn, amountIn, tokenOut, minAmountOut).send()
+  const expectedOutTokenAmount = TokenAmount.fromBigInt(tokenOut, expectedOut)
+  const minAmountOut = expectedOutTokenAmount.applySlippageBps(inputs.slippageBps as i32)
+  Swap.create(inputs.chainId, tokenIn, amountIn, tokenOut, minAmountOut.amount).send()
 }
 
 function getTokenPrice(chainId: i32, subgraphId: string, tokenIn: Address, tokenOut: Address): BigInt {

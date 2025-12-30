@@ -1,7 +1,6 @@
 import {
   Arbitrum,
   Base,
-  BigInt,
   ChainId,
   environment,
   ListType,
@@ -13,8 +12,6 @@ import {
 } from '@mimicprotocol/lib-ts'
 
 import { inputs } from './types'
-
-const BPS_DENOMINATOR = BigInt.fromI32(10_000)
 
 export default function main(): void {
   const chainId = inputs.chainId
@@ -28,12 +25,11 @@ export default function main(): void {
   }
 
   const USDC = getUsdc(chainId)
-  const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
 
   for (let i = 0; i < amountsIn.length; i++) {
     const amountIn = amountsIn[i]
     const amountOut = amountIn.toTokenAmount(USDC).unwrap()
-    const minAmountOut = amountOut.times(slippageFactor).div(BPS_DENOMINATOR)
+    const minAmountOut = amountOut.applySlippageBps(inputs.slippageBps as i32)
 
     // Note that the recipient will receive the USDC
     SwapBuilder.forChain(chainId)

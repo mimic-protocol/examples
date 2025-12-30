@@ -91,15 +91,14 @@ export default function main(): void {
     const tokenInAmount = movedUSD.toTokenAmount(tokensMetadata[surplusTokenIndex]).unwrap()
     const expectedTokenOutAmount = movedUSD.toTokenAmount(tokensMetadata[deficitTokenIndex]).unwrap()
 
-    const slippageFactor = BPS_DENOMINATOR.minus(BigInt.fromI32(inputs.slippageBps as i32))
-    const minAmountOut = expectedTokenOutAmount.amount.times(slippageFactor).div(BPS_DENOMINATOR)
+    const minAmountOut = expectedTokenOutAmount.applySlippageBps(inputs.slippageBps as i32)
 
     Swap.create(
       inputs.chainId,
       tokensMetadata[surplusTokenIndex],
       tokenInAmount.amount,
       tokensMetadata[deficitTokenIndex],
-      minAmountOut
+      minAmountOut.amount
     ).send()
 
     surpluses[surplusIndex].amountUSD = surpluses[surplusIndex].amountUSD.minus(movedUSD)
