@@ -3,6 +3,5 @@ name: Collect Task
 description: Swaps all user tokens for USDC and sends the USDC to a recipient
 inputs:
   - chainId: int32
-  - tokensCsv: string
   - slippageBps: uint16   # e.g., 50 = 0.50%
   - recipient: address
