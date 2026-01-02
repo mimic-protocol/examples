@@ -4,6 +4,6 @@ description: Refunds clients based on past orders
 inputs:
   - chainId: uint32
   - token: string
-  - amount: string       # Amount in wei (as string)
+  - amount: string       # e.g., '1.5' = 1.5 of the given token
   - recipient: address
   - maxFee: string       # e.g., '0.01' = 0.01 of the given token
