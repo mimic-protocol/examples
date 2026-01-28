@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Simple transfer with inputs
-description: Automated task to execute parameterized transfers
+description: Automated function to execute parameterized transfers
 inputs:
   - chainId: uint32
   - token: address

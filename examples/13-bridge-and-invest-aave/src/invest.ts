@@ -23,14 +23,14 @@ export default function main(): void {
 
   const aaveV3Pool = getAaveV3Pool(chainId)
 
-  const trigger = environment.getContext().trigger
+  const trigger = environment.getContext().triggerPayload
   if (trigger.type != TriggerType.EVENT) throw new Error('Trigger not event')
 
   const triggerData = trigger.getEventData()
   const event = IntentExecutedEvent.decode(triggerData.topics, triggerData.eventData)
   if (event.intent.user != smartAccount) throw new Error('Intent user not smart account')
 
-  // Get the token and the amount from the event emitted by the task that triggered this one
+  // Get the token and the amount from the event emitted by the function that triggered this one
   const tokenStr = evm.decode(new EvmDecodeParam('address', event.data.toHexString()))
   const token = Address.fromString(tokenStr)
 

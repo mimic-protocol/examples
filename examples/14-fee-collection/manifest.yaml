@@ -1,5 +1,5 @@
 version: 1.0.0
-name: Collect Task
+name: Collect Function
 description: Swaps all user tokens for USDC and sends the USDC to a recipient
 inputs:
   - chainId: int32

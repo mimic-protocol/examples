@@ -4,17 +4,15 @@
     "target": "es2020",
     "rootDir": "src",
     "outDir": "dist",
-    "module": "commonjs",
+    "module": "Node16",
     "esModuleInterop": true,
+    "moduleResolution": "node16",
     "sourceMap": true,
     "declaration": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "declarationMap": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "skipLibCheck": true
   },
   "include": [
-    "src/create-config.invest.ts"
+    "src/create-trigger.ts"
   ]
 }

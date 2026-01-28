@@ -1,5 +1,5 @@
 import { NATIVE_TOKEN_ADDRESS, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { EvmCallQueryMock, RelevantTokensQueryMock, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { EvmCallQueryMock, RelevantTokensQueryMock, runFunction, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -7,8 +7,8 @@ import ERC20Abi from '../abis/ERC20.json'
 
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const chainId = 1
   const USDC = randomEvmAddress()
@@ -59,7 +59,7 @@ describe('Task', () => {
     ]
 
     it('produces the expected intents for multiple tokens', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, relevantTokens })
+      const result = await runFunction(functionDir, context, { inputs, calls, relevantTokens })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -106,7 +106,7 @@ describe('Task', () => {
     ]
 
     it('does not produce any intents', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, relevantTokens })
+      const result = await runFunction(functionDir, context, { inputs, calls, relevantTokens })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
       expect(result.intents).to.be.empty

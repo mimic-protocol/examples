@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Transfer based on threshold
-description: Automated task to execute parameterized transfers based on balance threshold
+description: Automated function to execute parameterized transfers based on balance threshold
 inputs:
   - chainId: uint32
   - token: address

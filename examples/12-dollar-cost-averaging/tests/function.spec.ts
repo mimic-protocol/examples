@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, runTask, Swap, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runFunction, Swap, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -7,8 +7,8 @@ import ERC20Abi from '../abis/ERC20.json'
 
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const chainId = Chains.Base
   const USDC = randomEvmAddress()
@@ -31,11 +31,11 @@ describe('Task', () => {
 
   const prices: TokenPriceQueryMock[] = [
     {
-      request: { token: USDC, chainId },
+      request: { token: { address: USDC, chainId } },
       response: [fp(1).toString()], // 1 USDC = 1 USD
     },
     {
-      request: { token: WETH, chainId },
+      request: { token: { address: WETH, chainId } },
       response: [fp(4200).toString()], // 1 WETH = 4200 USD
     },
   ]
@@ -62,7 +62,7 @@ describe('Task', () => {
   ]
 
   it('produces the expected intents', async () => {
-    const result = await runTask(taskDir, context, { inputs, prices, calls })
+    const result = await runFunction(functionDir, context, { inputs, prices, calls })
     expect(result.success).to.be.true
     expect(result.timestamp).to.be.equal(context.timestamp)
 

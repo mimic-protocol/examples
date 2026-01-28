@@ -3,7 +3,7 @@ import {
   Context,
   EvmCallQueryMock,
   RelevantTokensQueryMock,
-  runTask,
+  runFunction,
   Swap,
   TokenPriceQueryMock,
 } from '@mimicprotocol/test-ts'
@@ -14,8 +14,8 @@ import ERC20Abi from '../abis/ERC20.json'
 
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const chainId = Chains.Base
   const USDC = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
@@ -35,9 +35,9 @@ describe('Task', () => {
   }
 
   const prices: TokenPriceQueryMock[] = [
-    { request: { token: USDC, chainId }, response: [fp(1).toString()] }, // 1 USDC = 1 USD
-    { request: { token: WETH, chainId }, response: [fp(50).toString()] }, // 1 WETH = 50 USD
-    { request: { token: WBTC, chainId }, response: [fp(100).toString()] }, // 1 WBTC = 100 USD
+    { request: { token: { address: USDC, chainId } }, response: [fp(1).toString()] }, // 1 USDC = 1 USD
+    { request: { token: { address: WETH, chainId } }, response: [fp(50).toString()] }, // 1 WETH = 50 USD
+    { request: { token: { address: WBTC, chainId } }, response: [fp(100).toString()] }, // 1 WBTC = 100 USD
   ]
 
   const calls: EvmCallQueryMock[] = [
@@ -93,7 +93,7 @@ describe('Task', () => {
     ]
 
     it('produces the expected intents for multiple tokens', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, prices, relevantTokens })
+      const result = await runFunction(functionDir, context, { inputs, calls, prices, relevantTokens })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -153,7 +153,7 @@ describe('Task', () => {
     ]
 
     it('does not produce any intents', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, prices, relevantTokens })
+      const result = await runFunction(functionDir, context, { inputs, calls, prices, relevantTokens })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
       expect(result.intents).to.be.empty

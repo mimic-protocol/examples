@@ -1,5 +1,5 @@
 import { EvmCallIntent, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, runTask, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runFunction, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -11,8 +11,8 @@ const AavePoolInterface = new Interface(AavePool)
 const AaveTokenInterface = new Interface(AaveToken)
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const context: Context = {
     user: randomEvmAddress(),
@@ -33,11 +33,11 @@ describe('Task', () => {
 
   const prices: TokenPriceQueryMock[] = [
     {
-      request: { token: inputs.aToken, chainId: inputs.chainId },
+      request: { token: { address: inputs.aToken, chainId: inputs.chainId } },
       response: ['1000000000000000000'], // 1 aOptUSDC = 1 USD
     },
     {
-      request: { token: underlyingToken, chainId: inputs.chainId },
+      request: { token: { address: underlyingToken, chainId: inputs.chainId } },
       response: ['1000000000000000000'], // 1 USDC = 1 USD
     },
   ]
@@ -109,7 +109,7 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('does not produce any intent', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, prices })
+      const result = await runFunction(functionDir, context, { inputs, calls, prices })
       expect(result.success).to.be.true
       expect(result.intents).to.be.empty
 
@@ -124,7 +124,7 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('produces the expected intents', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, prices })
+      const result = await runFunction(functionDir, context, { inputs, calls, prices })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 

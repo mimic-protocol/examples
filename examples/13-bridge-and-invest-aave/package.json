@@ -10,12 +10,12 @@
     "codegen:bridge": "yarn mimic codegen -m manifest.bridge.yaml -o ./src/types/bridge",
     "codegen:invest": "yarn mimic codegen -m manifest.invest.yaml -o ./src/types/invest",
     "compile": "yarn compile:bridge && yarn compile:invest",
-    "compile:bridge": "mimic compile -t src/bridge.ts -m manifest.bridge.yaml -o ./build/bridge",
-    "compile:invest": "mimic compile -t src/invest.ts -m manifest.invest.yaml -o ./build/invest",
+    "compile:bridge": "mimic compile -f src/bridge.ts -m manifest.bridge.yaml -o ./build/bridge",
+    "compile:invest": "mimic compile -f src/invest.ts -m manifest.invest.yaml -o ./build/invest",
     "deploy:bridge": "yarn codegen:bridge && yarn compile:bridge && mimic deploy --input ./build/bridge --output ./build/bridge --skip-compile",
     "deploy:invest": "yarn codegen:invest && yarn compile:invest && mimic deploy --input ./build/invest --output ./build/invest --skip-compile",
     "test": "yarn build && mimic test --skip-compile",
-    "create-config:invest": "tsc -p tsconfig.create-config.json && tsx src/create-config.invest.ts",
+    "create-trigger:invest": "tsc -p tsconfig.create-trigger.json && tsx src/create-trigger.invest.ts",
     "lint": "eslint ."
   },
   "dependencies": {

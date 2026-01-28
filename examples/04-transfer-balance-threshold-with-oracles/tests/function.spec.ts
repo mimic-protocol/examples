@@ -1,5 +1,5 @@
 import { fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runFunction, TokenPriceQueryMock, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -7,8 +7,8 @@ import ERC20Abi from '../abis/ERC20.json'
 
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const context: Context = {
     user: randomEvmAddress(),
@@ -22,8 +22,15 @@ describe('Task', () => {
     amount: '1', // 1 token
     recipient: randomEvmAddress(),
     maxFee: '0.1', // 0.1 tokens
-    threshold: '10.2', // 10.2 tokens
+    thresholdUsd: '10.5', // 10.5 USD
   }
+
+  const prices: TokenPriceQueryMock[] = [
+    {
+      request: { token: { address: inputs.token, chainId: inputs.chainId } },
+      response: ['1000000000000000000'], // 1 token = 1 USD
+    },
+  ]
 
   const buildCalls = (balance: string): EvmCallQueryMock[] => [
     {
@@ -50,7 +57,7 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('produces the expected intents', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls })
+      const result = await runFunction(functionDir, context, { inputs, calls, prices })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -61,7 +68,7 @@ describe('Task', () => {
       expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
       expect(intents[0].user).to.be.equal(context.user)
       expect(intents[0].chainId).to.be.equal(inputs.chainId)
-      expect(intents[0].maxFees).to.have.lengthOf(1)
+      expect(intents[0].maxFees.length).to.be.equal(1)
       expect(intents[0].maxFees[0].token).to.be.equal(inputs.token)
       expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, 6).toString())
 
@@ -69,6 +76,9 @@ describe('Task', () => {
       expect(intents[0].transfers[0].token).to.be.equal(inputs.token)
       expect(intents[0].transfers[0].amount).to.be.equal(fp(inputs.amount, 6).toString())
       expect(intents[0].transfers[0].recipient).to.be.equal(inputs.recipient)
+
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.be.equal('[Info] Balance in USD: 9')
     })
   })
 
@@ -77,9 +87,12 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('does not produce any intent', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls })
+      const result = await runFunction(functionDir, context, { inputs, calls, prices })
       expect(result.success).to.be.true
       expect(result.intents).to.be.empty
+
+      expect(result.logs).to.have.lengthOf(1)
+      expect(result.logs[0]).to.be.equal('[Info] Balance in USD: 11')
     })
   })
 })

@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, Inputs, runTask, Swap } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, Inputs, runFunction, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, Interface, keccak256, toUtf8Bytes } from 'ethers'
 
@@ -8,7 +8,7 @@ import ERC20Abi from '../src/abis/ERC20.json'
 const ERC20Interface = new Interface(ERC20Abi)
 
 describe('Bridge', () => {
-  const taskDir = './build/bridge'
+  const functionDir = './build/bridge'
 
   const sourceChain = Chains.Arbitrum
   const destinationChain = Chains.Optimism
@@ -61,7 +61,7 @@ describe('Bridge', () => {
 
   const itThrowsAnError = (inputs: Inputs, error: string): void => {
     it('throws an error', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls })
+      const result = await runFunction(functionDir, context, { inputs, calls })
       expect(result.success).to.be.false
       expect(result.intents).to.have.lengthOf(0)
 
@@ -73,7 +73,7 @@ describe('Bridge', () => {
   describe('when the chains are supported', () => {
     describe('when the chains are different', () => {
       it('produces the expected intents', async () => {
-        const result = await runTask(taskDir, context, { inputs, calls })
+        const result = await runFunction(functionDir, context, { inputs, calls })
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 

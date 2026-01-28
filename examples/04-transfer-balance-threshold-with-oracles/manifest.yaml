@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Transfer based on USD threshold
-description: Automated task to execute parameterized transfers based on balance threshold in USD
+description: Automated function to execute parameterized transfers based on balance threshold in USD
 inputs:
   - chainId: uint32
   - token: address

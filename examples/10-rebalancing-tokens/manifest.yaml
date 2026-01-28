@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Rebalance to USD target ratios (3 tokens)
-description: Automated task that rebalances a 3-token portfolio to target basis-point weights using USD valuations and slippage-protected swaps
+description: Automated function that rebalances a 3-token portfolio to target basis-point weights using USD valuations and slippage-protected swaps
 inputs:
   - chainId: uint32
   - tokenA: address

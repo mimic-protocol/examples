@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Bridge USDC and emit an event
-description: Bridge USDC between Arbitrum, Base and Optimism, and emit a custom event to trigger another task
+description: Bridge USDC between Arbitrum, Base and Optimism, and emit a custom event to trigger another function
 inputs:
   - sourceChain: uint32
   - destinationChain: uint32
