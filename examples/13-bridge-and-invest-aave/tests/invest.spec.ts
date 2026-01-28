@@ -8,7 +8,7 @@ import {
   randomSig,
   TriggerType,
 } from '@mimicprotocol/sdk'
-import { Call, Context, EvmCallQueryMock, Inputs, runTask } from '@mimicprotocol/test-ts'
+import { Call, Context, EvmCallQueryMock, Inputs, runFunction } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, Interface } from 'ethers'
 
@@ -21,7 +21,7 @@ const ERC20Interface = new Interface(ERC20Abi)
 const SettlerInterface = new Interface(SettlerAbi)
 
 describe('Invest', () => {
-  const taskDir = './build/invest'
+  const functionDir = './build/invest'
 
   const chainId = Chains.Optimism
   const aavePool = '0x794a61358d6845594f94dc1db02a252b5b4814ad'
@@ -34,7 +34,7 @@ describe('Invest', () => {
   const encodedAmounts = AbiCoder.defaultAbiCoder().encode(['uint256[]'], [[amount]])
   const encodedToken = AbiCoder.defaultAbiCoder().encode(['address'], [USDC])
   const encodedEvent = encodeEvent(smartAccount, encodedAmounts, encodedToken)
-  const trigger = {
+  const triggerPayload = {
     type: TriggerType.Event,
     data: encodeEventExecution({
       address: settler,
@@ -50,7 +50,7 @@ describe('Invest', () => {
     user: randomEvmAddress(),
     settlers: [{ address: settler, chainId }],
     timestamp: Date.now(),
-    trigger,
+    triggerPayload,
   }
 
   const inputs = {
@@ -73,7 +73,7 @@ describe('Invest', () => {
 
   const itThrowsAnError = (context: Context, inputs: Inputs, error: string): void => {
     it('throws an error', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls })
+      const result = await runFunction(functionDir, context, { inputs, calls })
       expect(result.success).to.be.false
       expect(result.intents).to.have.lengthOf(0)
 
@@ -86,7 +86,7 @@ describe('Invest', () => {
     describe('when the trigger is event', () => {
       describe('when the event user is the smart account', () => {
         it('produces the expected intents', async () => {
-          const result = await runTask(taskDir, context, { inputs, calls })
+          const result = await runFunction(functionDir, context, { inputs, calls })
           expect(result.success).to.be.true
           expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -128,8 +128,8 @@ describe('Invest', () => {
       })
     })
 
-    describe('when the trigger is not event', () => {
-      const cronContext = { ...context, trigger: { ...trigger, type: TriggerType.Cron } }
+    describe('when the triggerPayload is not event', () => {
+      const cronContext = { ...context, triggerPayload: { ...triggerPayload, type: TriggerType.Cron } }
 
       itThrowsAnError(cronContext, inputs, 'Trigger not event')
     })
@@ -154,7 +154,7 @@ export function encodeEvent(user: string, output: string, data: string): { topic
     '0x', // data
     [], // maxFees
     [], // events
-    randomSig(), // configSig
+    randomSig(), // triggerSig
     0, // minValidations
     [], // validations
   ]

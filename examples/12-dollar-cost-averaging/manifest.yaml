@@ -1,6 +1,6 @@
 version: 1.0.0
 name: DCA
-description: Dollar-cost averaging task that swaps tokenIn to tokenOut
+description: Dollar-cost averaging function that swaps tokenIn to tokenOut
 inputs:
   - chainId: uint32
   - tokenIn: address

@@ -1,6 +1,6 @@
 version: 1.0.0
-name: Claim-Swap-Transfer Loop Task
-description: This task is for demo purposes. It withdraws from AAVE, swaps for an AAVE token and transfer to deposit in loop
+name: Claim-Swap-Transfer Loop Function
+description: This function is for demo purposes. It withdraws from AAVE, swaps for an AAVE token and transfer to deposit in loop
 inputs:
   - maxFeeUsdt: string      # e.g., '0.5' = 0.5 USDT
   - smartAccount: address

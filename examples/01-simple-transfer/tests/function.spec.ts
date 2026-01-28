@@ -1,9 +1,9 @@
 import { OpType } from '@mimicprotocol/sdk'
-import { Context, runTask, Transfer } from '@mimicprotocol/test-ts'
+import { Context, runFunction, Transfer } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const context: Context = {
     user: '0x756f45e3fa69347a9a973a725e3c98bc4db0b5a0',
@@ -12,7 +12,7 @@ describe('Task', () => {
   }
 
   it('produces the expected intents', async () => {
-    const result = await runTask(taskDir, context)
+    const result = await runFunction(functionDir, context)
     expect(result.success).to.be.true
     expect(result.timestamp).to.be.equal(context.timestamp)
 

@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Withdraw from AAVE based on balance threshold
-description: Automated task to withdraw from AAVE based on balance threshold in USD
+description: Automated function to withdraw from AAVE based on balance threshold in USD
 inputs:
   - chainId: uint32
   - aToken: address

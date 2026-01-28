@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 config()
 
 import { Chains, Client, EthersSigner, Sort, TriggerType } from '@mimicprotocol/sdk'
-import { AbiCoder, Interface, keccak256, toUtf8Bytes, Wallet } from 'ethers'
+import { AbiCoder, Interface, keccak256, toUtf8Bytes } from 'ethers'
 import { inc } from 'semver'
 
 import SettlerAbi from './abis/Settler.json'
@@ -29,31 +29,31 @@ async function main(): Promise<void> {
   const signer = EthersSigner.fromPrivateKey(PRIVATE_KEY)
   const client = new Client({ signer })
 
-  // Get task manifest from deployed task
-  const manifest = await client.tasks.getManifest(INVEST_CID)
+  // Get function manifest from deployed function
+  const manifest = await client.functions.getManifest(INVEST_CID)
 
   // Set user topic to filter events
   const USER_TOPIC = AbiCoder.defaultAbiCoder().encode(['address'], [SMART_ACCOUNT])
 
-  // Increment config version
-  const latestConfig = await client.configs.get({ taskCid: INVEST_CID, sort: Sort.desc, limit: 1 })
-  const version = latestConfig.length > 0 ? inc(latestConfig[0].version.split('-')[0], 'patch') : '0.0.1'
-  if (!version) throw new Error('Invalid config version')
+  // Increment trigger version
+  const latestTrigger = await client.triggers.get({ functionCid: INVEST_CID, sort: Sort.desc, limit: 1 })
+  const version = latestTrigger.length > 0 ? inc(latestTrigger[0].version.split('-')[0], 'patch') : '0.0.1'
+  if (!version) throw new Error('Invalid trigger version')
 
   // Set trigger based on a blockchain event
-  const trigger = {
-    type: TriggerType.Event as const,
+  const config = {
+    type: TriggerType.Event,
     contract: MIMIC_PROTOCOL_SETTLER,
     topics: [
       [INTENT_EXECUTED_TOPIC], // The event emitted by the Settler
-      [USER_TOPIC], // Important: To prevent other users from triggering this task
-      [BRIDGED_TOPIC], // Emitted by the bridge task
+      [USER_TOPIC], // Important: To prevent other users from triggering this function
+      [BRIDGED_TOPIC], // Emitted by the bridge function
     ],
     delta: '1h',
     endDate: 0, // No end date
   }
 
-  // Submit one task config per chain
+  // Submit one function trigger per chain
   const chainIds = [Chains.Arbitrum, Chains.Base, Chains.Optimism]
   for (const chainId of chainIds) {
     const input = {
@@ -63,18 +63,17 @@ async function main(): Promise<void> {
       maxFee: '0.3',
     }
 
-    const config = await client.configs.signAndCreate({
+    const trigger = await client.triggers.signAndCreate({
       description: `Invest bridged amount in Aave (${chainId})`,
-      taskCid: INVEST_CID,
+      functionCid: INVEST_CID,
       version: `${version}-${chainId}`,
       manifest,
-      trigger: { ...trigger, chainId },
+      config: { ...config, chainId },
       input,
       executionFeeLimit: '0',
       minValidations: 1,
-      signer: new Wallet(PRIVATE_KEY).address,
     })
-    console.log(`Created config on chain ${chainId}: ${config.sig}`)
+    console.log(`Created config on chain ${chainId}: ${trigger.sig}`)
   }
 }
 

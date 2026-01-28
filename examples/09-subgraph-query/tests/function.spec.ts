@@ -1,5 +1,5 @@
 import { OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, runTask, SubgraphQueryMock, Swap } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runFunction, SubgraphQueryMock, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -7,8 +7,8 @@ import ERC20Abi from '../abis/ERC20.json'
 
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const context: Context = {
     user: randomEvmAddress(),
@@ -72,7 +72,7 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('produces the expected intents', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, subgraphQueries })
+      const result = await runFunction(functionDir, context, { inputs, calls, subgraphQueries })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -101,7 +101,7 @@ describe('Task', () => {
     const calls = buildCalls(balance)
 
     it('throws an error', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls, subgraphQueries })
+      const result = await runFunction(functionDir, context, { inputs, calls, subgraphQueries })
       expect(result.success).to.be.false
 
       expect(result.logs).to.have.lengthOf(1)
