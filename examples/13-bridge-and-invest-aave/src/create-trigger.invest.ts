@@ -73,7 +73,7 @@ async function main(): Promise<void> {
       executionFeeLimit: '0',
       minValidations: 1,
     })
-    console.log(`Created config on chain ${chainId}: ${trigger.sig}`)
+    console.log(`Created trigger on chain ${chainId}: ${trigger.sig}`)
   }
 }
 
