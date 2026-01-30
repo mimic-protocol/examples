@@ -1,5 +1,5 @@
 import { Chains, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { EvmCallQueryMock, runTask, Swap } from '@mimicprotocol/test-ts'
+import { EvmCallQueryMock, runFunction, Swap } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -7,8 +7,8 @@ import ERC20Abi from '../abis/ERC20.json'
 
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const chainId = Chains.Optimism
 
@@ -81,9 +81,9 @@ describe('Task', () => {
   describe('when there are some balances', () => {
     // Prices: BTC=$60k, ETH=$3k, DAI=$1 — all with 1e18 USD precision
     const prices = [
-      { request: { token: WBTC, chainId }, response: ['60000000000000000000000'] }, // 60000 * 1e18
-      { request: { token: WETH, chainId }, response: ['3000000000000000000000'] }, // 3000  * 1e18
-      { request: { token: DAI, chainId }, response: ['1000000000000000000'] }, // 1     * 1e18
+      { request: { token: { address: WBTC, chainId } }, response: ['60000000000000000000000'] }, // 60000 * 1e18
+      { request: { token: { address: WETH, chainId } }, response: ['3000000000000000000000'] }, // 3000  * 1e18
+      { request: { token: { address: DAI, chainId } }, response: ['1000000000000000000'] }, // 1     * 1e18
     ]
 
     describe('when rebalancing is needed (ETH surplus → BTC & DAI deficits)', () => {
@@ -103,7 +103,7 @@ describe('Task', () => {
       )
 
       it('emits two swap intents with correct legs and slippage protections', async () => {
-        const result = await runTask(taskDir, context, { inputs, calls, prices })
+        const result = await runFunction(functionDir, context, { inputs, calls, prices })
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -162,7 +162,7 @@ describe('Task', () => {
       )
 
       it('does not produce any intents', async () => {
-        const result = await runTask(taskDir, context, { inputs: inputs, calls, prices })
+        const result = await runFunction(functionDir, context, { inputs: inputs, calls, prices })
         expect(result.success).to.be.true
         expect(result.intents).to.be.empty
 
@@ -176,7 +176,7 @@ describe('Task', () => {
     const calls = buildErc20Calls('0', '0', '0')
 
     it('does not produce any intents', async () => {
-      const result = await runTask(taskDir, context, { inputs: inputs, calls: calls, prices: [] })
+      const result = await runFunction(functionDir, context, { inputs: inputs, calls: calls, prices: [] })
       expect(result.success).to.be.true
       expect(result.intents).to.be.empty
 

@@ -9,7 +9,7 @@
     "codegen": "mimic codegen",
     "compile": "mimic compile",
     "test": "mimic test",
-    "create-config": "tsc -p tsconfig.create-config.json && tsx src/create-config.ts",
+    "create-trigger": "tsc -p tsconfig.create-trigger.json && tsx src/create-trigger.ts",
     "lint": "eslint ."
   },
   "dependencies": {

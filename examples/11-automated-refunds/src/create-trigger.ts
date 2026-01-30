@@ -2,7 +2,6 @@ import { config } from 'dotenv'
 config()
 
 import { Client, EthersSigner, getNextCronDate, HOUR, randomEvmAddress, Sort, TriggerType } from '@mimicprotocol/sdk'
-import { Wallet } from 'ethers'
 import { inc } from 'semver'
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -13,15 +12,15 @@ async function main() {
   const signer = EthersSigner.fromPrivateKey(process.env.PRIVATE_KEY)
   const client = new Client({ signer })
 
-  // Get task manifest from deployed task
-  if (!process.env.TASK_CID) throw new Error('Missing TASK_CID in .env file')
-  const taskCid = process.env.TASK_CID
-  const manifest = await client.tasks.getManifest(taskCid)
+  // Get function manifest from deployed function
+  if (!process.env.FUNCTION_CID) throw new Error('Missing FUNCTION_CID in .env file')
+  const functionCid = process.env.FUNCTION_CID
+  const manifest = await client.functions.getManifest(functionCid)
 
-  // Increment config version
-  const latestConfig = await client.configs.get({ taskCid, sort: Sort.desc, limit: 1 })
-  const version = latestConfig.length ? inc(latestConfig[0].version, 'patch') : '0.0.1'
-  if (!version) throw new Error('Invalid config version')
+  // Increment trigger version
+  const latestTrigger = await client.triggers.get({ functionCid, sort: Sort.desc, limit: 1 })
+  const version = latestTrigger.length ? inc(latestTrigger[0].version, 'patch') : '0.0.1'
+  if (!version) throw new Error('Invalid trigger version')
 
   // Get inputs and calculate trigger values
   const { chainId, token, amount, recipient, maxFee } = getRefundData()
@@ -29,13 +28,13 @@ async function main() {
   const deltaMs = HOUR * 1000
   const endDate = getNextCronDate(schedule).getTime() + deltaMs + 1 // 1 AM UTC
 
-  // Submit the signed task config to Mimic Protocol for one-time execution
-  await client.configs.signAndCreate({
+  // Submit the signed function trigger to Mimic Protocol for one-time execution
+  await client.triggers.signAndCreate({
     description: `Refund execution - ${Date.now()}`,
-    taskCid,
+    functionCid,
     version,
     manifest,
-    trigger: {
+    config: {
       type: TriggerType.Cron,
       schedule,
       delta: '1h',
@@ -44,7 +43,6 @@ async function main() {
     input: { chainId, token, amount, recipient, maxFee },
     executionFeeLimit: '0',
     minValidations: 1,
-    signer: new Wallet(process.env.PRIVATE_KEY).address,
   })
 }
 

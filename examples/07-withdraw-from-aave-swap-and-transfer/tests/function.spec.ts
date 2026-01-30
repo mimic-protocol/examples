@@ -4,7 +4,7 @@ import {
   Context,
   EvmCallQueryMock,
   RelevantTokensQueryMock,
-  runTask,
+  runFunction,
   Swap,
   TokenPriceQueryMock,
   Transfer,
@@ -18,8 +18,8 @@ import ERC20Abi from '../abis/ERC20.json'
 const AavePoolInterface = new Interface(AavePool)
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Task', () => {
-  const taskDir = './build'
+describe('Function', () => {
+  const functionDir = './build'
 
   const chainId = Chains.Optimism
 
@@ -50,15 +50,15 @@ describe('Task', () => {
 
   const prices: TokenPriceQueryMock[] = [
     {
-      request: { token: tokens.aUSDC, chainId },
+      request: { token: { address: tokens.aUSDC, chainId } },
       response: ['1000000'],
     },
     {
-      request: { token: tokens.USDC, chainId },
+      request: { token: { address: tokens.USDC, chainId } },
       response: ['1000000'],
     },
     {
-      request: { token: tokens.USDT, chainId },
+      request: { token: { address: tokens.USDT, chainId } },
       response: ['1000000'],
     },
   ]
@@ -118,7 +118,7 @@ describe('Task', () => {
     })
 
     it('produces claim, swap, and transfer', async () => {
-      const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+      const result = await runFunction(functionDir, context, { inputs, relevantTokens, prices, calls })
 
       const claimIntent = result.intents.find((i) => i.op === OpType.EvmCall)
       const swapIntent = result.intents.find((i) => i.op === OpType.Swap)
@@ -140,7 +140,7 @@ describe('Task', () => {
       })
 
       it('only produces a claim intent', async () => {
-        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        const result = await runFunction(functionDir, context, { inputs, relevantTokens, prices, calls })
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -170,7 +170,7 @@ describe('Task', () => {
       })
 
       it('only produces a swap intent', async () => {
-        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        const result = await runFunction(functionDir, context, { inputs, relevantTokens, prices, calls })
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -194,7 +194,7 @@ describe('Task', () => {
       })
 
       it('only produces a transfer intent', async () => {
-        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        const result = await runFunction(functionDir, context, { inputs, relevantTokens, prices, calls })
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -216,7 +216,7 @@ describe('Task', () => {
       })
 
       it('does not produce any intents', async () => {
-        const result = await runTask(taskDir, context, { inputs, relevantTokens, prices, calls })
+        const result = await runFunction(functionDir, context, { inputs, relevantTokens, prices, calls })
         expect(result.success).to.be.true
         expect(result.intents).to.be.empty
       })

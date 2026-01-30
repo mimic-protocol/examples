@@ -20,7 +20,7 @@
 
 ## Content
 
-This repository provides working examples of tasks that can be automated using Mimic Protocol.
+This repository provides working examples of functions that can be automated using Mimic Protocol.
 
 ## Setup
 
