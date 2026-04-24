@@ -46,10 +46,9 @@ export default function main(): void {
     // Claim aUSDC to user EOA using USDC in smart account
     aaveV3Pool
       .withdraw(USDC.address, aUsdcSmartAccount.amount, context.user)
-      .addMaxFee(maxFeeUsdt)
       .addUser(inputs.smartAccount)
       .build()
-      .send()
+      .send(maxFeeUsdt)
   }
 
   if (usdcUser && usdcUser.amount > BigInt.zero()) {
@@ -66,9 +65,8 @@ export default function main(): void {
     // Transfer aUSDC from user EOA to smart account
     TransferBuilder.forChain(chainId)
       .addTransfer(new TransferData(aUSDC.address, aUsdcUser.amount, inputs.smartAccount))
-      .addMaxFee(maxFeeUsdt)
       .build()
-      .send()
+      .send(maxFeeUsdt)
   }
 }
 

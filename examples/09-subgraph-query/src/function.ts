@@ -1,4 +1,13 @@
-import { Address, BigInt, environment, ERC20Token, Swap, TokenAmount } from '@mimicprotocol/lib-ts'
+import {
+  Address,
+  BigInt,
+  environment,
+  ERC20Token,
+  SwapBuilder,
+  SwapTokenIn,
+  SwapTokenOut,
+  TokenAmount,
+} from '@mimicprotocol/lib-ts'
 import { JSON } from 'json-as/assembly'
 
 import { ERC20 } from './types/ERC20'
@@ -35,7 +44,11 @@ export default function main(): void {
     .downscale(tokenIn.decimals + PRICE_PRECISION)
   const expectedOutTokenAmount = TokenAmount.fromBigInt(tokenOut, expectedOut)
   const minAmountOut = expectedOutTokenAmount.applySlippageBps(inputs.slippageBps as i32)
-  Swap.create(inputs.chainId, tokenIn, amountIn, tokenOut, minAmountOut.amount).send()
+  SwapBuilder.forChain(inputs.chainId)
+    .addTokenIn(new SwapTokenIn(tokenIn.address, amountIn))
+    .addTokenOut(new SwapTokenOut(tokenOut.address, minAmountOut.amount, me))
+    .build()
+    .send()
 }
 
 function getTokenPrice(chainId: i32, subgraphId: string, tokenIn: Address, tokenOut: Address): BigInt {

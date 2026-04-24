@@ -4,7 +4,7 @@ import {
   EvmCallQueryMock,
   RelevantTokensQueryMock,
   runFunction,
-  Swap,
+  SwapOperation,
   TokenPriceQueryMock,
 } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
@@ -97,12 +97,12 @@ describe('Function', () => {
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
-      const intents = result.intents as Swap[]
-      expect(intents).to.have.lengthOf(2)
+      expect(result.intents).to.have.lengthOf(2)
 
-      const firstSwap = intents[0]
-      expect(firstSwap.op).to.equal(OpType.Swap)
-      expect(firstSwap.settler).to.equal(context.settlers![0].address)
+      const firstIntent = result.intents[0]
+      const firstSwap = firstIntent.operations[0] as SwapOperation
+      expect(firstSwap.opType).to.equal(OpType.Swap)
+      expect(firstIntent.settler).to.equal(context.settlers![0].address)
       expect(firstSwap.user).to.equal(context.user)
       expect(firstSwap.sourceChain).to.equal(inputs.chainId)
       expect(firstSwap.destinationChain).to.equal(inputs.chainId)
@@ -116,9 +116,10 @@ describe('Function', () => {
       expect(firstSwap.tokensOut[0].minAmount).to.equal('49750000') // 50 USDC with 0.5% slippage
       expect(firstSwap.tokensOut[0].recipient).to.equal(inputs.recipient)
 
-      const secondSwap = intents[1]
-      expect(secondSwap.op).to.equal(OpType.Swap)
-      expect(secondSwap.settler).to.equal(context.settlers![0].address)
+      const secondIntent = result.intents[1]
+      const secondSwap = secondIntent.operations[0] as SwapOperation
+      expect(secondSwap.opType).to.equal(OpType.Swap)
+      expect(secondIntent.settler).to.equal(context.settlers![0].address)
       expect(secondSwap.user).to.equal(context.user)
       expect(secondSwap.sourceChain).to.equal(inputs.chainId)
       expect(secondSwap.destinationChain).to.equal(inputs.chainId)

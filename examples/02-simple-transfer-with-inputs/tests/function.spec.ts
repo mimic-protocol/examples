@@ -1,5 +1,5 @@
 import { fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, runFunction, Transfer } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runFunction, TransferOperation } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -40,20 +40,21 @@ describe('Function', () => {
     expect(result.success).to.be.true
     expect(result.timestamp).to.be.equal(context.timestamp)
 
-    const intents = result.intents as Transfer[]
-    expect(intents).to.have.lengthOf(1)
+    expect(result.intents).to.have.lengthOf(1)
+    const intent = result.intents[0]
+    const op = intent.operations[0] as TransferOperation
 
-    expect(intents[0].op).to.be.equal(OpType.Transfer)
-    expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-    expect(intents[0].user).to.be.equal(context.user)
-    expect(intents[0].chainId).to.be.equal(inputs.chainId)
-    expect(intents[0].maxFees).to.have.lengthOf(1)
-    expect(intents[0].maxFees[0].token).to.be.equal(inputs.token)
-    expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, 6).toString())
+    expect(op.opType).to.be.equal(OpType.Transfer)
+    expect(intent.settler).to.be.equal(context.settlers?.[0].address)
+    expect(op.user).to.be.equal(context.user)
+    expect(op.chainId).to.be.equal(inputs.chainId)
+    expect(intent.maxFees).to.have.lengthOf(1)
+    expect(intent.maxFees[0].token).to.be.equal(inputs.token)
+    expect(intent.maxFees[0].amount).to.be.equal(fp(inputs.maxFee, 6).toString())
 
-    expect(intents[0].transfers).to.have.lengthOf(1)
-    expect(intents[0].transfers[0].token).to.be.equal(inputs.token)
-    expect(intents[0].transfers[0].amount).to.be.equal(fp(inputs.amount, 6).toString())
-    expect(intents[0].transfers[0].recipient).to.be.equal(inputs.recipient)
+    expect(op.transfers).to.have.lengthOf(1)
+    expect(op.transfers[0].token).to.be.equal(inputs.token)
+    expect(op.transfers[0].amount).to.be.equal(fp(inputs.amount, 6).toString())
+    expect(op.transfers[0].recipient).to.be.equal(inputs.recipient)
   })
 })

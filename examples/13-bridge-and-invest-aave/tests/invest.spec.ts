@@ -8,7 +8,7 @@ import {
   randomSig,
   TriggerType,
 } from '@mimicprotocol/sdk'
-import { Call, Context, EvmCallQueryMock, Inputs, runFunction } from '@mimicprotocol/test-ts'
+import { CallOperation, Context, EvmCallQueryMock, Inputs, runFunction } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, Interface } from 'ethers'
 
@@ -90,24 +90,25 @@ describe('Invest', () => {
           expect(result.success).to.be.true
           expect(result.timestamp).to.be.equal(context.timestamp)
 
-          const intents = result.intents as Call[]
-          expect(intents).to.have.lengthOf(1)
+          expect(result.intents).to.have.lengthOf(1)
+          const intent = result.intents[0]
+          const op = intent.operations[0] as CallOperation
 
-          expect(intents[0].op).to.be.equal(OpType.EvmCall)
-          expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-          expect(intents[0].user).to.be.equal(inputs.smartAccount)
-          expect(intents[0].chainId).to.be.equal(inputs.chainId)
+          expect(op.opType).to.be.equal(OpType.EvmCall)
+          expect(intent.settler).to.be.equal(context.settlers?.[0].address)
+          expect(op.user).to.be.equal(inputs.smartAccount)
+          expect(op.chainId).to.be.equal(inputs.chainId)
 
-          expect(intents[0].maxFees).to.have.lengthOf(1)
-          expect(intents[0].maxFees[0].token).to.be.equal(inputs.feeToken)
-          expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee).toString())
+          expect(intent.maxFees).to.have.lengthOf(1)
+          expect(intent.maxFees[0].token).to.be.equal(inputs.feeToken)
+          expect(intent.maxFees[0].amount).to.be.equal(fp(inputs.maxFee).toString())
 
-          expect(intents[0].calls).to.have.lengthOf(2)
+          expect(op.calls).to.have.lengthOf(2)
 
           const expectedApproveData = ERC20Interface.encodeFunctionData('approve', [aavePool, amount])
-          expect(intents[0].calls[0].target).to.be.equal(USDC)
-          expect(intents[0].calls[0].value).to.be.equal('0')
-          expect(intents[0].calls[0].data).to.be.equal(expectedApproveData)
+          expect(op.calls[0].target).to.be.equal(USDC)
+          expect(op.calls[0].value).to.be.equal('0')
+          expect(op.calls[0].data).to.be.equal(expectedApproveData)
 
           const expectedSupplyData = AavePoolInterface.encodeFunctionData('supply(address,uint256,address,uint16)', [
             USDC,
@@ -115,9 +116,9 @@ describe('Invest', () => {
             smartAccount,
             0,
           ])
-          expect(intents[0].calls[1].target).to.be.equal(aavePool)
-          expect(intents[0].calls[1].value).to.be.equal('0')
-          expect(intents[0].calls[1].data).to.be.equal(expectedSupplyData)
+          expect(op.calls[1].target).to.be.equal(aavePool)
+          expect(op.calls[1].value).to.be.equal('0')
+          expect(op.calls[1].data).to.be.equal(expectedSupplyData)
         })
       })
 

@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, Inputs, runFunction, Swap } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, Inputs, runFunction, SwapOperation } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { AbiCoder, Interface, keccak256, toUtf8Bytes } from 'ethers'
 
@@ -77,37 +77,38 @@ describe('Bridge', () => {
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
-        const intents = result.intents as Swap[]
-        expect(intents).to.have.lengthOf(1)
+        expect(result.intents).to.have.lengthOf(1)
+        const intent = result.intents[0]
+        const op = intent.operations[0] as SwapOperation
 
-        expect(intents[0].op).to.be.equal(OpType.Swap)
-        expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-        expect(intents[0].user).to.be.equal(inputs.smartAccount)
-        expect(intents[0].sourceChain).to.be.equal(sourceChain)
-        expect(intents[0].destinationChain).to.be.equal(destinationChain)
+        expect(op.opType).to.be.equal(OpType.CrossChainSwap)
+        expect(intent.settler).to.be.equal(context.settlers?.[0].address)
+        expect(op.user).to.be.equal(inputs.smartAccount)
+        expect(op.sourceChain).to.be.equal(sourceChain)
+        expect(op.destinationChain).to.be.equal(destinationChain)
 
         const amount = fp(inputs.amount, decimals).toString()
-        expect(intents[0].tokensIn).to.have.lengthOf(1)
-        expect(intents[0].tokensIn[0].token).to.be.equal(sourceUsdc)
-        expect(intents[0].tokensIn[0].amount).to.be.equal(amount)
+        expect(op.tokensIn).to.have.lengthOf(1)
+        expect(op.tokensIn[0].token).to.be.equal(sourceUsdc)
+        expect(op.tokensIn[0].amount).to.be.equal(amount)
 
         const minAmountOut = fp(inputs.minAmountOut, decimals).toString()
-        expect(intents[0].tokensOut).to.have.lengthOf(1)
-        expect(intents[0].tokensOut[0].token).to.be.equal(destinationUsdc)
-        expect(intents[0].tokensOut[0].minAmount).to.be.equal(minAmountOut)
-        expect(intents[0].tokensOut[0].recipient).to.be.equal(inputs.smartAccount)
+        expect(op.tokensOut).to.have.lengthOf(1)
+        expect(op.tokensOut[0].token).to.be.equal(destinationUsdc)
+        expect(op.tokensOut[0].minAmount).to.be.equal(minAmountOut)
+        expect(op.tokensOut[0].recipient).to.be.equal(inputs.smartAccount)
 
-        expect(intents[0].maxFees).to.have.lengthOf(1)
-        expect(intents[0].maxFees[0].token).to.be.equal(inputs.feeToken)
-        expect(intents[0].maxFees[0].amount).to.be.equal(fp(inputs.maxFee, decimals).toString())
+        expect(intent.maxFees).to.have.lengthOf(1)
+        expect(intent.maxFees[0].token).to.be.equal(inputs.feeToken)
+        expect(intent.maxFees[0].amount).to.be.equal(fp(inputs.maxFee, decimals).toString())
 
-        expect(intents[0].events).to.have.lengthOf(1)
+        expect(op.events).to.have.lengthOf(1)
 
         const topic = keccak256(toUtf8Bytes('Bridged USDC'))
-        expect(intents[0].events[0].topic).to.be.equal(topic)
+        expect(op.events[0].topic).to.be.equal(topic)
 
         const data = AbiCoder.defaultAbiCoder().encode(['address'], [destinationUsdc])
-        expect(intents[0].events[0].data).to.be.equal(data)
+        expect(op.events[0].data).to.be.equal(data)
       })
     })
 

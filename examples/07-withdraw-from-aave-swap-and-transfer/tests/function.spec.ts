@@ -1,13 +1,13 @@
 import { Chains, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
 import {
-  Call,
+  CallOperation,
   Context,
   EvmCallQueryMock,
   RelevantTokensQueryMock,
   runFunction,
-  Swap,
+  SwapOperation,
   TokenPriceQueryMock,
-  Transfer,
+  TransferOperation,
 } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
@@ -120,9 +120,9 @@ describe('Function', () => {
     it('produces claim, swap, and transfer', async () => {
       const result = await runFunction(functionDir, context, { inputs, relevantTokens, prices, calls })
 
-      const claimIntent = result.intents.find((i) => i.op === OpType.EvmCall)
-      const swapIntent = result.intents.find((i) => i.op === OpType.Swap)
-      const transferIntent = result.intents.find((i) => i.op === OpType.Transfer)
+      const claimIntent = result.intents.find((i) => i.operations[0].opType === OpType.EvmCall)
+      const swapIntent = result.intents.find((i) => i.operations[0].opType === OpType.Swap)
+      const transferIntent = result.intents.find((i) => i.operations[0].opType === OpType.Transfer)
 
       expect(claimIntent).to.exist
       expect(swapIntent).to.exist
@@ -144,20 +144,21 @@ describe('Function', () => {
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
-        const intents = result.intents as Call[]
-        expect(intents).to.have.lengthOf(1)
+        expect(result.intents).to.have.lengthOf(1)
+        const intent = result.intents[0]
+        const op = intent.operations[0] as CallOperation
 
-        expect(intents[0].op).to.equal(OpType.EvmCall)
-        expect(intents[0].user).to.equal(inputs.smartAccount)
+        expect(op.opType).to.equal(OpType.EvmCall)
+        expect(op.user).to.equal(inputs.smartAccount)
 
         const expectedData = AavePoolInterface.encodeFunctionData('withdraw(address,uint256,address)', [
           tokens.USDC,
           amount,
           context.user,
         ])
-        expect(intents[0].calls[0].target).to.be.equal('0x794a61358d6845594f94dc1db02a252b5b4814ad')
-        expect(intents[0].calls[0].value).to.be.equal('0')
-        expect(intents[0].calls[0].data).to.be.equal(expectedData)
+        expect(op.calls[0].target).to.be.equal('0x794a61358d6845594f94dc1db02a252b5b4814ad')
+        expect(op.calls[0].value).to.be.equal('0')
+        expect(op.calls[0].data).to.be.equal(expectedData)
       })
     })
 
@@ -174,14 +175,15 @@ describe('Function', () => {
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
-        const intents = result.intents as Swap[]
-        expect(intents).to.have.lengthOf(1)
+        expect(result.intents).to.have.lengthOf(1)
+        const intent = result.intents[0]
+        const op = intent.operations[0] as SwapOperation
 
-        expect(intents[0].op).to.equal(OpType.Swap)
-        expect(intents[0].user).to.equal(context.user)
-        expect(intents[0].tokensIn[0].token).to.equal(tokens.USDC)
-        expect(intents[0].tokensIn[0].amount).to.equal(amount)
-        expect(intents[0].tokensOut[0].token).to.equal(tokens.aUSDC)
+        expect(op.opType).to.equal(OpType.Swap)
+        expect(op.user).to.equal(context.user)
+        expect(op.tokensIn[0].token).to.equal(tokens.USDC)
+        expect(op.tokensIn[0].amount).to.equal(amount)
+        expect(op.tokensOut[0].token).to.equal(tokens.aUSDC)
       })
     })
 
@@ -198,13 +200,14 @@ describe('Function', () => {
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
-        const intents = result.intents as Transfer[]
-        expect(intents).to.have.lengthOf(1)
+        expect(result.intents).to.have.lengthOf(1)
+        const intent = result.intents[0]
+        const op = intent.operations[0] as TransferOperation
 
-        expect(intents[0].op).to.equal(OpType.Transfer)
-        expect(intents[0].transfers[0].recipient).to.equal(inputs.smartAccount)
-        expect(intents[0].transfers[0].amount).to.equal(amount)
-        expect(intents[0].user).to.equal(context.user)
+        expect(op.opType).to.equal(OpType.Transfer)
+        expect(op.transfers[0].recipient).to.equal(inputs.smartAccount)
+        expect(op.transfers[0].amount).to.equal(amount)
+        expect(op.user).to.equal(context.user)
       })
     })
 

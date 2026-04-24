@@ -20,5 +20,5 @@ export default function main(): void {
     return
   }
 
-  builder.addMaxFee(TokenAmount.fromStringDecimal(DenominationToken.USD(), inputs.maxFeeUsd)).build().send()
+  builder.build().send(TokenAmount.fromStringDecimal(DenominationToken.USD(), inputs.maxFeeUsd))
 }

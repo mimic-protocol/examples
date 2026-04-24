@@ -1,5 +1,5 @@
 import { NATIVE_TOKEN_ADDRESS, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { EvmCallQueryMock, RelevantTokensQueryMock, runFunction, Transfer } from '@mimicprotocol/test-ts'
+import { EvmCallQueryMock, RelevantTokensQueryMock, runFunction, TransferOperation } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -63,23 +63,24 @@ describe('Function', () => {
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
-      const intents = result.intents as Transfer[]
-      expect(intents).to.have.lengthOf(1)
+      expect(result.intents).to.have.lengthOf(1)
+      const intent = result.intents[0]
+      const op = intent.operations[0] as TransferOperation
 
-      expect(intents[0].op).to.be.equal(OpType.Transfer)
-      expect(intents[0].chainId).to.equal(chainId)
-      expect(intents[0].maxFees.length).to.equal(1)
-      expect(intents[0].maxFees[0].token).to.equal('0x0000000000000000000000000000000000000348')
-      expect(intents[0].maxFees[0].amount).to.equal('100000000000000000')
-      expect(intents[0].user).to.equal(context.user)
-      expect(intents[0].transfers).to.have.lengthOf(2)
+      expect(op.opType).to.be.equal(OpType.Transfer)
+      expect(op.chainId).to.equal(chainId)
+      expect(intent.maxFees.length).to.equal(1)
+      expect(intent.maxFees[0].token).to.equal('0x0000000000000000000000000000000000000348')
+      expect(intent.maxFees[0].amount).to.equal('100000000000000000')
+      expect(op.user).to.equal(context.user)
+      expect(op.transfers).to.have.lengthOf(2)
 
-      const firstTransfer = intents[0].transfers[0]
+      const firstTransfer = op.transfers[0]
       expect(firstTransfer.token).to.equal(USDC)
       expect(firstTransfer.amount).to.equal('10')
       expect(firstTransfer.recipient).to.be.equal(inputs.recipient)
 
-      const secondTransfer = intents[0].transfers[1]
+      const secondTransfer = op.transfers[1]
       expect(secondTransfer.token).to.equal(NATIVE_TOKEN_ADDRESS.toLowerCase())
       expect(secondTransfer.amount).to.equal('100')
       expect(secondTransfer.recipient).to.be.equal(inputs.recipient)

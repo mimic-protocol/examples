@@ -1,5 +1,5 @@
 import { OpType } from '@mimicprotocol/sdk'
-import { Context, runFunction, Transfer } from '@mimicprotocol/test-ts'
+import { Context, runFunction, TransferOperation } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Function', () => {
@@ -16,20 +16,21 @@ describe('Function', () => {
     expect(result.success).to.be.true
     expect(result.timestamp).to.be.equal(context.timestamp)
 
-    const intents = result.intents as Transfer[]
-    expect(intents).to.have.lengthOf(1)
+    expect(result.intents).to.have.lengthOf(1)
+    const intent = result.intents[0]
+    const op = intent.operations[0] as TransferOperation
 
-    expect(intents[0].op).to.be.equal(OpType.Transfer)
-    expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-    expect(intents[0].user).to.be.equal(context.user)
-    expect(intents[0].chainId).to.be.equal(10)
-    expect(intents[0].maxFees).to.have.lengthOf(1)
-    expect(intents[0].maxFees[0].token).to.be.equal('0x7f5c764cbc14f9669b88837ca1490cca17c31607')
-    expect(intents[0].maxFees[0].amount).to.be.equal('100000')
+    expect(op.opType).to.be.equal(OpType.Transfer)
+    expect(intent.settler).to.be.equal(context.settlers?.[0].address)
+    expect(op.user).to.be.equal(context.user)
+    expect(op.chainId).to.be.equal(10)
+    expect(intent.maxFees).to.have.lengthOf(1)
+    expect(intent.maxFees[0].token).to.be.equal('0x0b2c639c533813f4aa9d7837caf62653d097ff85')
+    expect(intent.maxFees[0].amount).to.be.equal('1000000')
 
-    expect(intents[0].transfers).to.have.lengthOf(1)
-    expect(intents[0].transfers[0].token).to.be.equal('0x7f5c764cbc14f9669b88837ca1490cca17c31607')
-    expect(intents[0].transfers[0].amount).to.be.equal('1000000')
-    expect(intents[0].transfers[0].recipient).to.be.equal('0xbce3248ede29116e4bd18416dcc2dfca668eeb84')
+    expect(op.transfers).to.have.lengthOf(1)
+    expect(op.transfers[0].token).to.be.equal('0x0b2c639c533813f4aa9d7837caf62653d097ff85')
+    expect(op.transfers[0].amount).to.be.equal('1000000')
+    expect(op.transfers[0].recipient).to.be.equal('0xbce3248ede29116e4bd18416dcc2dfca668eeb84')
   })
 })

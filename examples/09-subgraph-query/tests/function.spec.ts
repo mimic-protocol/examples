@@ -1,5 +1,5 @@
 import { OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, runFunction, SubgraphQueryMock, Swap } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runFunction, SubgraphQueryMock, SwapOperation } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -76,23 +76,24 @@ describe('Function', () => {
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
-      const intents = result.intents as Swap[]
-      expect(intents).to.have.lengthOf(1)
+      expect(result.intents).to.have.lengthOf(1)
+      const intent = result.intents[0]
+      const op = intent.operations[0] as SwapOperation
 
-      expect(intents[0].op).to.equal(OpType.Swap)
-      expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-      expect(intents[0].user).to.be.equal(context.user)
-      expect(intents[0].sourceChain).to.be.equal(inputs.chainId)
-      expect(intents[0].destinationChain).to.be.equal(inputs.chainId)
+      expect(op.opType).to.equal(OpType.Swap)
+      expect(intent.settler).to.be.equal(context.settlers?.[0].address)
+      expect(op.user).to.be.equal(context.user)
+      expect(op.sourceChain).to.be.equal(inputs.chainId)
+      expect(op.destinationChain).to.be.equal(inputs.chainId)
 
-      expect(intents[0].tokensIn).to.have.lengthOf(1)
-      expect(intents[0].tokensIn[0].token).to.be.equal(inputs.tokenIn)
-      expect(intents[0].tokensIn[0].amount).to.be.equal(balance)
+      expect(op.tokensIn).to.have.lengthOf(1)
+      expect(op.tokensIn[0].token).to.be.equal(inputs.tokenIn)
+      expect(op.tokensIn[0].amount).to.be.equal(balance)
 
-      expect(intents[0].tokensOut).to.have.lengthOf(1)
-      expect(intents[0].tokensOut[0].token).to.be.equal(inputs.tokenOut)
-      expect(intents[0].tokensOut[0].minAmount).to.be.equal('2162649261976865122')
-      expect(intents[0].tokensOut[0].recipient).to.be.equal(context.user)
+      expect(op.tokensOut).to.have.lengthOf(1)
+      expect(op.tokensOut[0].token).to.be.equal(inputs.tokenOut)
+      expect(op.tokensOut[0].minAmount).to.be.equal('2162649261976865122')
+      expect(op.tokensOut[0].recipient).to.be.equal(context.user)
     })
   })
 
