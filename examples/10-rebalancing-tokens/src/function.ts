@@ -105,6 +105,7 @@ export default function main(): void {
 
     const minAmountOut = expectedTokenOutAmount.applySlippageBps(inputs.slippageBps as i32)
 
+    // No fee is added because swaps can be funded through positive slippage.
     SwapBuilder.forChain(inputs.chainId)
       .addTokenIn(new SwapTokenIn(tokensMetadata[surplusTokenIndex].address, tokenInAmount.amount))
       .addTokenOut(new SwapTokenOut(tokensMetadata[deficitTokenIndex].address, minAmountOut.amount, me))

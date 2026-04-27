@@ -44,6 +44,7 @@ export default function main(): void {
     .downscale(tokenIn.decimals + PRICE_PRECISION)
   const expectedOutTokenAmount = TokenAmount.fromBigInt(tokenOut, expectedOut)
   const minAmountOut = expectedOutTokenAmount.applySlippageBps(inputs.slippageBps as i32)
+  // No fee is added because swaps can be funded through positive slippage.
   SwapBuilder.forChain(inputs.chainId)
     .addTokenIn(new SwapTokenIn(tokenIn.address, amountIn))
     .addTokenOut(new SwapTokenOut(tokenOut.address, minAmountOut.amount, me))
