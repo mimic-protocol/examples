@@ -12,8 +12,8 @@
     "compile": "yarn compile:bridge && yarn compile:invest",
     "compile:bridge": "mimic compile -f src/bridge.ts -m manifest.bridge.yaml -b ./build/bridge",
     "compile:invest": "mimic compile -f src/invest.ts -m manifest.invest.yaml -b ./build/invest",
-    "deploy:bridge": "yarn codegen:bridge && yarn compile:bridge && mimic deploy --input ./build/bridge -b ./build/bridge --skip-build",
-    "deploy:invest": "yarn codegen:invest && yarn compile:invest && mimic deploy --input ./build/invest -b ./build/invest --skip-build",
+    "deploy:bridge": "yarn codegen:bridge && yarn compile:bridge && mimic deploy -b ./build/bridge --skip-build",
+    "deploy:invest": "yarn codegen:invest && yarn compile:invest && mimic deploy -b ./build/invest --skip-build",
     "test": "yarn build && mimic test --skip-build",
     "create-trigger:invest": "tsc -p tsconfig.create-trigger.json && tsx src/create-trigger.invest.ts",
     "lint": "eslint ."
