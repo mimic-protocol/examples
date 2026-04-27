@@ -1,0 +1,12 @@
+functions:
+  - name: bridge
+    manifest: ./manifest.bridge.yaml
+    function: ./src/bridge.ts
+    build-directory: ./build/bridge
+    types-directory: ./src/types/bridge
+
+  - name: invest
+    manifest: ./manifest.invest.yaml
+    function: ./src/invest.ts
+    build-directory: ./build/invest
+    types-directory: ./src/types/invest
