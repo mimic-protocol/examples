@@ -14,7 +14,7 @@
     "compile:invest": "mimic compile -i invest",
     "deploy:bridge": "mimic deploy -i bridge",
     "deploy:invest": "mimic deploy -i invest",
-    "test": "yarn build && mimic test --skip-build",
+    "test": "mimic test",
     "create-trigger:invest": "tsc -p tsconfig.create-trigger.json && tsx src/create-trigger.invest.ts",
     "lint": "eslint ."
   },
