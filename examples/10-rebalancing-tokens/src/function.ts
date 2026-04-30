@@ -1,4 +1,15 @@
-import { Address, BigInt, environment, ERC20Token, log, Swap, TokenAmount, USD } from '@mimicprotocol/lib-ts'
+import {
+  Address,
+  BigInt,
+  environment,
+  ERC20Token,
+  log,
+  SwapBuilder,
+  SwapTokenIn,
+  SwapTokenOut,
+  TokenAmount,
+  USD,
+} from '@mimicprotocol/lib-ts'
 
 import { ERC20 } from './types/ERC20'
 import { inputs } from './types'
@@ -30,6 +41,7 @@ class Bucket {
 }
 
 export default function main(): void {
+  const me = environment.getContext().user
   const tokenAddresses = [inputs.tokenA, inputs.tokenB, inputs.tokenC]
   const targetBps = [inputs.targetBpsA as i32, inputs.targetBpsB as i32, inputs.targetBpsC as i32]
 
@@ -93,13 +105,12 @@ export default function main(): void {
 
     const minAmountOut = expectedTokenOutAmount.applySlippageBps(inputs.slippageBps as i32)
 
-    Swap.create(
-      inputs.chainId,
-      tokensMetadata[surplusTokenIndex],
-      tokenInAmount.amount,
-      tokensMetadata[deficitTokenIndex],
-      minAmountOut.amount
-    ).send()
+    // No fee is added because swaps can be funded through positive slippage.
+    SwapBuilder.forChain(inputs.chainId)
+      .addTokenIn(new SwapTokenIn(tokensMetadata[surplusTokenIndex].address, tokenInAmount.amount))
+      .addTokenOut(new SwapTokenOut(tokensMetadata[deficitTokenIndex].address, minAmountOut.amount, me))
+      .build()
+      .send()
 
     surpluses[surplusIndex].amountUSD = surpluses[surplusIndex].amountUSD.minus(movedUSD)
     deficits[deficitIndex].amountUSD = deficits[deficitIndex].amountUSD.minus(movedUSD)

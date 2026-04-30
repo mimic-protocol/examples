@@ -36,5 +36,5 @@ export default function main(): void {
 
   // Use mimic credits to pay for the transaction fee
   const feeWithCredits = TokenAmount.fromStringDecimal(DenominationToken.USD(), inputs.maxFeeUsd)
-  calls.addUser(inputs.smartAccount).addMaxFee(feeWithCredits).build().send()
+  calls.addUser(inputs.smartAccount).build().send(feeWithCredits)
 }

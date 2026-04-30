@@ -1,5 +1,5 @@
 import { OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Context, EvmCallQueryMock, runFunction, Swap, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
+import { Context, EvmCallQueryMock, runFunction, SwapOperation, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -115,23 +115,24 @@ describe('Function', () => {
         expect(result.success).to.be.true
         expect(result.timestamp).to.be.equal(context.timestamp)
 
-        const intents = result.intents as Swap[]
-        expect(intents).to.have.lengthOf(1)
+        expect(result.intents).to.have.lengthOf(1)
+        const intent = result.intents[0]
+        const op = intent.operations[0] as SwapOperation
 
-        expect(intents[0].op).to.be.equal(OpType.Swap)
-        expect(intents[0].settler).to.be.equal(context.settlers?.[0].address)
-        expect(intents[0].user).to.be.equal(context.user)
-        expect(intents[0].sourceChain).to.be.equal(inputs.chainId)
-        expect(intents[0].destinationChain).to.be.equal(inputs.chainId)
+        expect(op.opType).to.be.equal(OpType.Swap)
+        expect(intent.settler).to.be.equal(context.settlers?.[0].address)
+        expect(op.user).to.be.equal(context.user)
+        expect(op.sourceChain).to.be.equal(inputs.chainId)
+        expect(op.destinationChain).to.be.equal(inputs.chainId)
 
-        expect(intents[0].tokensIn).to.have.lengthOf(1)
-        expect(intents[0].tokensIn[0].token).to.be.equal(inputs.aToken)
-        expect(intents[0].tokensIn[0].amount).to.be.equal(userBalance)
+        expect(op.tokensIn).to.have.lengthOf(1)
+        expect(op.tokensIn[0].token).to.be.equal(inputs.aToken)
+        expect(op.tokensIn[0].amount).to.be.equal(userBalance)
 
-        expect(intents[0].tokensOut).to.have.lengthOf(1)
-        expect(intents[0].tokensOut[0].token).to.be.equal(underlyingToken)
-        expect(intents[0].tokensOut[0].minAmount).to.be.equal('10780000') // balance_in_usdc * (1 - slippage) = 11 * 0.98 = 10.78
-        expect(intents[0].tokensOut[0].recipient).to.be.equal(inputs.recipient)
+        expect(op.tokensOut).to.have.lengthOf(1)
+        expect(op.tokensOut[0].token).to.be.equal(underlyingToken)
+        expect(op.tokensOut[0].minAmount).to.be.equal('10780000') // balance_in_usdc * (1 - slippage) = 11 * 0.98 = 10.78
+        expect(op.tokensOut[0].recipient).to.be.equal(inputs.recipient)
 
         expect(result.logs).to.have.lengthOf(2)
         expect(result.logs[0]).to.be.equal('[Info] Recipient underlying balance in USD: 9')

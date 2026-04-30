@@ -50,9 +50,8 @@ export default function main(): void {
     .addCall(token, approveData)
     .addCall(aaveV3Pool, supplyData)
     .addUser(smartAccount)
-    .addMaxFee(maxFee)
     .build()
-    .send()
+    .send(maxFee)
 }
 
 function getAaveV3Pool(chainId: i32): Address {

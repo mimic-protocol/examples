@@ -37,11 +37,10 @@ export default function main(): void {
     .addTokenInFromTokenAmount(tokenAmountIn)
     .addTokenOutFromTokenAmount(tokenAmountOut, inputs.smartAccount)
     .addUser(inputs.smartAccount)
-    .addMaxFee(maxFee)
     // Settler smart contract will emit an IntentExecuted event in which `topic2 = keccak256('Bridged USDC')`
     .addEvent(Bytes.fromHexString(topic), Bytes.fromHexString(data)) // Optional
     .build()
-    .send()
+    .send(maxFee)
 }
 
 function getUsdc(chainId: i32): Token {
