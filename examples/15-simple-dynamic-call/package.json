@@ -1,12 +1,11 @@
 {
-  "name": "mimic-function",
+  "name": "@mimicprotocol/15-simple-dynamic-call",
   "version": "0.0.1",
   "license": "Unlicensed",
   "private": true,
   "type": "module",
   "scripts": {
-    "deploy": "mimic deploy",
-    "build": "mimic build",
+    "build": "yarn codegen && yarn compile",
     "codegen": "mimic codegen",
     "compile": "mimic compile",
     "test": "mimic test",
@@ -22,7 +21,6 @@
     "@types/node": "^22.10.5",
     "assemblyscript": "0.27.36",
     "chai": "^4.3.7",
-    "dotenv": "^17.2.3",
     "eslint": "^9.10.0",
     "json-as": "1.1.7",
     "mocha": "^10.2.0",
