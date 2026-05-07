@@ -1,0 +1,12 @@
+version: 1.0.0
+name: Swap + Dynamic Call Function
+description: Use swap outputs as dynamic call inputs
+inputs:
+  - tokenIn: address
+  - tokenOut: address
+  - chainId: uint32
+  - amount: string          # e.g., '20.5' = 20.5 of the given token
+  - slippageBps: uint16     # e.g., 50 = 0.50%
+  - smartAccount: address
+  - recipient: address
+  - maxFeeUsd: string       # e.g., '0.01' = 0.01 USD
