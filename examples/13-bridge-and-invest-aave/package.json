@@ -24,10 +24,10 @@
     "semver": "^7.7.3"
   },
   "devDependencies": {
-    "@mimicprotocol/cli": "latest",
-    "@mimicprotocol/lib-ts": "latest",
-    "@mimicprotocol/sdk": "latest",
-    "@mimicprotocol/test-ts": "latest",
+    "@mimicprotocol/cli": "1.0.0",
+    "@mimicprotocol/lib-ts": "0.1.0",
+    "@mimicprotocol/sdk": "0.1.0",
+    "@mimicprotocol/test-ts": "0.1.0",
     "@types/chai": "^5.2.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.5",

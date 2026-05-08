@@ -1,5 +1,5 @@
 {
-  "name": "@mimicprotocol/04-transfer-balance-threshold-with-oracles",
+  "name": "@mimicprotocol/15-simple-dynamic-call",
   "version": "0.0.1",
   "license": "Unlicensed",
   "private": true,
