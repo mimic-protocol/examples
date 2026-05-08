@@ -31,13 +31,14 @@ export default function main(): void {
     .addTokenInFromTokenAmount(amountIn)
     .addTokenOutFromTokenAmount(minAmountOut, smartAccount)
 
-  /*
-    Dynamic call operation (called after the swap, using the received tokens)
-    It is calling the contract of tokenOut.address on the transfer() function
-    Using a literal address value for the first arg and the swap operation output as the second arg
-    This would be equivalent of doing:
-    `IERC20(tokenOut.address).transfer(to=recipient, value=result of swap)`
-  */
+  /**
+   * Dynamic call operation (executed after the swap using the received tokens).
+   * Calls the `transfer()` function on the `tokenOut.address` contract.
+   * Uses a literal address as the first argument and the swap output as the second.
+   *
+   * This is equivalent to:
+   * `IERC20(tokenOut.address).transfer(to = recipient, value = swapResult)`
+   */
   const target = tokenOut.address
   const selector = Bytes.fromHexString('0xa9059cbb') // transfer() selector
   const dynamicCall = EvmDynamicCallBuilder.forChain(chainId)

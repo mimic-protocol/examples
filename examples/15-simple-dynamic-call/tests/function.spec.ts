@@ -1,5 +1,11 @@
-import { Chains, EvmDynamicCallOperation, OpType, randomEvmAddress, SwapOperation } from '@mimicprotocol/sdk'
-import { EvmCallQueryMock, runFunction, TokenPriceQueryMock } from '@mimicprotocol/test-ts'
+import { Chains, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
+import {
+  EvmCallQueryMock,
+  EvmDynamicCallOperation,
+  runFunction,
+  SwapOperation,
+  TokenPriceQueryMock,
+} from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 
 describe('Function', () => {
@@ -54,7 +60,6 @@ describe('Function', () => {
     expect(result.intents).to.have.lengthOf(1)
     const intent = result.intents[0]
 
-    expect(intent.feePayer).to.be.equal(context.user)
     expect(intent.feePayer).to.be.equal(context.user)
     expect(intent.maxFees).to.have.lengthOf(1)
     expect(intent.maxFees[0].token).to.be.equal('0x0000000000000000000000000000000000000348')
