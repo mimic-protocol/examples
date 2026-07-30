@@ -1,0 +1,12 @@
+version: 1.0.0
+name: Swap And Split Function
+description: Swap tokens and transfer the output to multiple recipients
+inputs:
+  - chainId: uint32
+  - tokenIn: address
+  - tokenOut: address
+  - amount: string          # e.g., '10.5' = 10.5 USDC
+  - slippageBps: uint16     # e.g., 50 = 0.50%
+  - user: address
+  - allocations: string     # e.g., '0xab...c:6075,0xde...f:3925' (60.75% to 0xab...c and 39.25% to 0xde...f)
+  - maxFeeUsd: string       # e.g., '0.01' = 0.01 USD
