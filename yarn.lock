@@ -475,10 +475,10 @@
     json-as "1.1.7"
     visitor-as "0.11.4"
 
-"@mimicprotocol/lib-ts@~0.1.0":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.1.4.tgz#bfad2213b5caaeeb3541d789ab896a405c663794"
-  integrity sha512-aZzcI4yAPXBPcuMD6Iy8XDK/4O4OeQvOQ5u31uYy1Y2kOxZ2Up3Uet/opcn4zHCHCZDUR/G/sj3i5NLrT0bfPA==
+"@mimicprotocol/lib-ts@~0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@mimicprotocol/lib-ts/-/lib-ts-0.1.5.tgz#c6941bce067fa17bdf08dec5889cbb77f8748a68"
+  integrity sha512-g+HCUFC46w6MOVs16gqUPcLR2TBRClxxm781J+KVZhBctOB+2mc+ARS7yRA4T2QMc40Nrp/Ufe8BQtILaBr7dg==
   dependencies:
     as-base58 "^0.1.1"
     eslint-config-mimic "^0.0.4"
