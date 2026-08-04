@@ -1,0 +1,36 @@
+{
+  "name": "@mimicprotocol/16-swap-and-split",
+  "version": "0.0.1",
+  "license": "Unlicensed",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "mimic deploy",
+    "build": "mimic build",
+    "codegen": "mimic codegen",
+    "compile": "mimic compile",
+    "test": "mimic test",
+    "lint": "eslint .",
+    "trigger": "tsx scripts/create-trigger.ts",
+    "prefill-url": "tsx scripts/get-trigger-prefill-url.ts",
+    "try-function": "tsx scripts/try-function.ts"
+  },
+  "devDependencies": {
+    "@mimicprotocol/cli": "~1.0.0",
+    "@mimicprotocol/lib-ts": "~0.1.5",
+    "@mimicprotocol/sdk": "~0.1.3",
+    "@mimicprotocol/test-ts": "~0.1.0",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.5",
+    "assemblyscript": "0.27.36",
+    "chai": "^4.3.7",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.10.0",
+    "json-as": "1.1.7",
+    "mocha": "^10.2.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "visitor-as": "0.11.4"
+  }
+}
